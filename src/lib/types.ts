@@ -2,13 +2,13 @@
 export type UserRole = 'artisan' | 'buyer';
 
 export interface UserProfile {
-  userId: string;
+  id: string;
   name: string;
   email: string;
   role: UserRole;
   location?: string;
   preferredLanguage: 'en' | 'hi' | 'ta' | 'bn' | 'mr';
-  profilePhoto?: string;
+  profilePhotoUrl?: string;
 }
 
 export interface MarketingContent {
@@ -19,7 +19,7 @@ export interface MarketingContent {
 }
 
 export interface Product {
-  productId: string;
+  id: string;
   artisanId: string;
   artisanName?: string;
   productName: string;
@@ -35,11 +35,12 @@ export interface Product {
     max: number; 
     reasoning: string 
   };
-  currency: string;
   images: string[];
   story: string;
   culturalNote?: string;
   tags: string[];
   marketing?: MarketingContent;
-  createdAt: Date;
+  status: 'Draft' | 'Published';
+  createdAt: any;
+  updatedAt: any;
 }

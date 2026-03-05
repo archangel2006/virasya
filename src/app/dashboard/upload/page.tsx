@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Camera, Sparkles, Check, Image as ImageIcon, Loader2, Save, Send, RefreshCw, Globe, ArrowRight, ArrowLeft, Megaphone } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ export default function ProductUploadPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isMarketingLoading, setIsMarketingLoading] = useState(false);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const db = useFirestore();
   const { user } = useUser();
@@ -42,9 +42,10 @@ export default function ProductUploadPage() {
     { id: 1, label: 'Detecting Craft Category', status: 'pending' },
     { id: 2, label: 'Identifying Materials', status: 'pending' },
     { id: 3, label: 'Suggesting Product Title', status: 'pending' },
-    { id: 4, label: 'Generating Description', status: 'pending' },
-    { id: 5, label: 'Creating Craft Story', status: 'pending' },
-    { id: 6, label: 'Calculating Price Guidance', status: 'pending' },
+    { id: 4, label: 'Analyzing Craft Style', status: 'pending' },
+    { id: 5, label: 'Generating Short Description', status: 'pending' },
+    { id: 6, label: 'Creating Craft Story', status: 'pending' },
+    { id: 7, label: 'Calculating Price Guidance', status: 'pending' },
   ]);
 
   const [details, setDetails] = useState({
@@ -52,7 +53,7 @@ export default function ProductUploadPage() {
     category: 'Pottery',
     materials: '',
     style: '',
-    region: 'Jaipur, Rajasthan',
+    region: 'Rajasthan, India',
     description: '',
     story: '',
     price: 0,
@@ -66,20 +67,20 @@ export default function ProductUploadPage() {
     setStep(2);
     
     try {
-      // Start the actual AI call
+      // Start AI vision analysis
       const aiResult = await artisanAITypeDetection({ 
         productImageDataUri: dataUri,
         location: details.region
       });
 
-      // Sequential visual feedback for UX
+      // Visual simulation of sequential processing for UX
       for (let i = 0; i < processingSteps.length; i++) {
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'loading' } : s));
-        await new Promise(r => setTimeout(r, 600)); 
+        await new Promise(r => setTimeout(r, 800)); 
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'complete' } : s));
       }
 
-      // Populate state with results
+      // Populate form state
       const midpoint = aiResult.pricing.suggestedMidpoint;
       setDetails({
         ...details,
@@ -91,15 +92,15 @@ export default function ProductUploadPage() {
         story: aiResult.craftStory,
         price: midpoint,
         priceRange: {
-          min: Math.round(midpoint * 0.9), // 10% lower
-          max: Math.round(midpoint * 1.1), // 10% higher
+          min: Math.round(midpoint * 0.9), // Narrow 10% variance
+          max: Math.round(midpoint * 1.1),
           reasoning: aiResult.pricing.reasoning
         }
       });
 
-      setTimeout(() => setStep(3), 500);
+      setTimeout(() => setStep(3), 600);
     } catch (error) {
-      toast({ title: "Analysis failed", variant: "destructive" });
+      toast({ title: "AI Analysis failed", variant: "destructive" });
       setStep(1);
     } finally {
       setIsProcessing(false);
@@ -160,13 +161,13 @@ export default function ProductUploadPage() {
     }
   };
 
-  const handlePublish = async () => {
+  const handleSave = async (status: 'Draft' | 'Published') => {
     if (!user || !db) return;
-    setIsPublishing(true);
+    setIsSaving(true);
 
     const productData = {
       artisanId: user.uid,
-      artisanName: user.displayName || 'Artisan',
+      artisanName: user.displayName || 'Authentic Artisan',
       productName: details.title,
       description: details.description,
       craftType: details.category,
@@ -177,7 +178,7 @@ export default function ProductUploadPage() {
       availableQuantity: details.quantity,
       images: image ? [image] : [],
       story: details.story,
-      status: 'Published',
+      status: status,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       marketing: details.marketing
@@ -186,7 +187,11 @@ export default function ProductUploadPage() {
     const productsRef = collection(db, 'products');
     addDocumentNonBlocking(productsRef, productData);
     
-    toast({ title: "Product Published!", description: "Your craft is now live on the marketplace." });
+    toast({ 
+      title: status === 'Published' ? "Product Published!" : "Draft Saved!", 
+      description: status === 'Published' ? "Your craft is now live on the marketplace." : "You can find your draft in the hub."
+    });
+    
     setTimeout(() => {
       router.push('/dashboard');
     }, 1500);
@@ -197,31 +202,31 @@ export default function ProductUploadPage() {
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 flex-grow max-w-5xl">
-        {/* Progress Header */}
+        {/* Step Progress Visuals */}
         <div className="mb-12">
           <div className="flex items-center gap-4 mb-4">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${step >= i ? 'bg-primary' : 'bg-secondary'}`} />
+              <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${step >= i ? 'bg-primary' : 'bg-secondary'}`} />
             ))}
           </div>
           <h1 className="text-4xl font-headline font-bold">
-            {step === 1 && "Step 1: Start with a Photo"}
+            {step === 1 && "Step 1: Upload Craft Photo"}
             {step === 2 && "Virasya AI Analyzing..."}
-            {step === 3 && "Step 2: Refine Your Listing"}
+            {step === 3 && "Step 2: Review & Edit Listing"}
             {step === 4 && "Step 3: Final Preview"}
           </h1>
         </div>
 
         {step === 1 && (
-          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[40px] shadow-sm border-2 border-dashed border-primary/20">
-            <div className="bg-secondary/50 p-8 rounded-full mb-6">
-              <Camera className="h-12 w-12 text-primary" />
+          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-[40px] shadow-sm border-2 border-dashed border-primary/20">
+            <div className="bg-secondary/50 p-10 rounded-full mb-6">
+              <Camera className="h-14 w-14 text-primary" />
             </div>
-            <h2 className="text-2xl font-headline font-bold mb-2">Upload Product Image</h2>
-            <p className="text-muted-foreground mb-8 text-center max-w-md">Our AI vision pipeline will detect details and generate your listing automatically.</p>
+            <h2 className="text-2xl font-headline font-bold mb-2">Select a Product Photo</h2>
+            <p className="text-muted-foreground mb-8 text-center max-w-md italic">"Our AI will detect the craft type, materials, and generate a factual heritage story automatically."</p>
             <label className="cursor-pointer">
-              <Button size="lg" className="rounded-full px-12 h-14 shadow-lg text-lg" asChild>
-                <span>Select Photo</span>
+              <Button size="lg" className="rounded-full px-14 h-14 shadow-lg text-lg" asChild>
+                <span>Upload Image</span>
               </Button>
               <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
             </label>
@@ -231,7 +236,7 @@ export default function ProductUploadPage() {
         {step === 2 && (
           <div className="max-w-md mx-auto space-y-4 py-12">
             {processingSteps.map(s => (
-              <div key={s.id} className={`flex items-center justify-between p-5 rounded-2xl bg-white border transition-all ${s.status === 'complete' ? 'border-primary/20 opacity-100 shadow-sm' : 'opacity-40'}`}>
+              <div key={s.id} className={`flex items-center justify-between p-5 rounded-2xl bg-white border transition-all duration-300 ${s.status === 'complete' ? 'border-primary/20 opacity-100 shadow-sm' : s.status === 'loading' ? 'border-primary/50 opacity-100 ring-2 ring-primary/10' : 'opacity-40'}`}>
                 <span className="font-bold text-sm tracking-tight">{s.label}</span>
                 {s.status === 'loading' && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
                 {s.status === 'complete' && <Check className="h-5 w-5 text-primary" />}
@@ -245,8 +250,8 @@ export default function ProductUploadPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 space-y-6">
               <Card className="overflow-hidden border-none shadow-sm rounded-3xl bg-white aspect-[3/4] relative">
-                {image && <img src={image} alt="Craft" className="w-full h-full object-cover" />}
-                <label className="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg cursor-pointer">
+                {image && <img src={image} alt="Uploaded Craft" className="w-full h-full object-cover" />}
+                <label className="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-secondary transition-colors">
                   <RefreshCw className="h-5 w-5 text-primary" />
                   <input type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
                 </label>
@@ -254,7 +259,7 @@ export default function ProductUploadPage() {
 
               <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                 <h3 className="font-headline font-bold text-primary mb-3 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" /> AI Price Guidance
+                  <Sparkles className="h-4 w-4" /> AI Pricing Guidance
                 </h3>
                 <p className="text-2xl font-headline font-bold text-primary mb-2">₹{details.priceRange.min} - ₹{details.priceRange.max}</p>
                 <p className="text-xs text-muted-foreground leading-relaxed italic">"{details.priceRange.reasoning}"</p>
@@ -262,7 +267,7 @@ export default function ProductUploadPage() {
               
               <Button 
                 variant="outline" 
-                className="w-full rounded-full h-12 gap-2 border-2" 
+                className="w-full rounded-full h-12 gap-2 border-2 hover:bg-primary/5" 
                 onClick={handleGenerateMarketing}
                 disabled={isMarketingLoading}
               >
@@ -273,11 +278,11 @@ export default function ProductUploadPage() {
 
             <div className="lg:col-span-2 space-y-6">
               <Card className="border-none shadow-sm rounded-[40px] bg-white p-8">
-                <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-2xl font-headline font-bold">Edit Details</h2>
+                <div className="flex justify-between items-center mb-10">
+                  <h2 className="text-2xl font-headline font-bold">Listing Details</h2>
                   <div className="flex gap-2">
                     {['Hindi', 'Tamil', 'Bengali', 'Marathi'].map(l => (
-                      <Button key={l} variant="ghost" size="sm" className="h-8 rounded-full text-[10px]" onClick={() => handleTranslate(l)} disabled={isTranslating}>
+                      <Button key={l} variant="ghost" size="sm" className="h-8 rounded-full text-[10px] bg-secondary/30" onClick={() => handleTranslate(l)} disabled={isTranslating}>
                         {isTranslating ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Globe className="h-3 w-3 mr-1" />}
                         {l}
                       </Button>
@@ -311,30 +316,30 @@ export default function ProductUploadPage() {
                       <Input value={details.style} onChange={e => setDetails({...details, style: e.target.value})} className="rounded-xl h-12" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Price (INR)</Label>
-                      <Input type="number" value={details.price} onChange={e => setDetails({...details, price: Number(e.target.value)})} className="rounded-xl h-12" />
+                      <Label>Selling Price (INR)</Label>
+                      <Input type="number" value={details.price} onChange={e => setDetails({...details, price: Number(e.target.value)})} className="rounded-xl h-12 font-bold text-primary" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Available Quantity</Label>
+                      <Label>Stock Quantity</Label>
                       <Input type="number" value={details.quantity} onChange={e => setDetails({...details, quantity: Number(e.target.value)})} className="rounded-xl h-12" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label>Short Description</Label>
-                    <Textarea value={details.description} onChange={e => setDetails({...details, description: e.target.value})} className="rounded-xl min-h-[100px]" />
+                    <Textarea value={details.description} onChange={e => setDetails({...details, description: e.target.value})} className="rounded-xl min-h-[100px] leading-relaxed" />
                   </div>
 
                   <div className="space-y-2">
                     <Label>Authentic Craft Story</Label>
-                    <Textarea value={details.story} onChange={e => setDetails({...details, story: e.target.value})} className="rounded-xl min-h-[120px] italic text-muted-foreground" />
-                    <p className="text-[10px] text-primary/60 italic">*Verified cultural context only. Max 4 sentences.</p>
+                    <Textarea value={details.story} onChange={e => setDetails({...details, story: e.target.value})} className="rounded-xl min-h-[120px] italic text-muted-foreground bg-secondary/10 border-none" />
+                    <p className="text-[10px] text-primary/60 italic">*Generated based on verified cultural context. Max 4 sentences.</p>
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-10">
+                <div className="flex gap-4 pt-12">
                   <Button variant="outline" className="flex-1 rounded-full h-14 border-2" onClick={() => setStep(1)}>
-                    Restart
+                    Discard
                   </Button>
                   <Button className="flex-1 rounded-full h-14 shadow-lg text-lg gap-2" onClick={() => setStep(4)}>
                     Preview Listing <ArrowRight className="h-5 w-5" />
@@ -346,57 +351,80 @@ export default function ProductUploadPage() {
         )}
 
         {step === 4 && (
-          <div className="max-w-4xl mx-auto space-y-8 pb-20">
+          <div className="max-w-4xl mx-auto space-y-8 pb-24">
             <div className="bg-white rounded-[50px] overflow-hidden shadow-xl border-none">
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="relative aspect-square">
-                  {image && <img src={image} alt="Preview" className="w-full h-full object-cover" />}
+                  {image && <img src={image} alt="Product Preview" className="w-full h-full object-cover" />}
                 </div>
                 <div className="p-10 space-y-6">
                   <div className="flex gap-2">
-                    <Badge variant="secondary" className="bg-primary/10 text-primary border-none">{details.category}</Badge>
+                    <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold">{details.category}</Badge>
                     <Badge variant="outline" className="border-primary/20">{details.style}</Badge>
                   </div>
                   <h2 className="text-4xl font-headline font-bold leading-tight">{details.title}</h2>
                   <p className="text-3xl font-bold text-primary">₹{details.price}</p>
-                  <p className="text-muted-foreground leading-relaxed">{details.description}</p>
+                  <p className="text-muted-foreground leading-relaxed font-body">{details.description}</p>
                   <div className="pt-6 border-t border-primary/10">
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">The Heritage Story</p>
-                    <p className="italic text-sm leading-relaxed text-muted-foreground">"{details.story}"</p>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">Heritage Story</p>
+                    <p className="italic text-sm leading-relaxed text-muted-foreground font-headline">"{details.story}"</p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-4">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <p className="text-xs font-medium text-muted-foreground">{details.quantity} units available in {details.region}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {details.marketing && (
-              <Card className="border-none shadow-sm rounded-[40px] bg-secondary/20 p-8">
+              <Card className="border-none shadow-sm rounded-[40px] bg-secondary/20 p-8 border-2 border-primary/5">
                 <h3 className="text-xl font-headline font-bold mb-6 flex items-center gap-2">
-                   <Megaphone className="h-5 w-5 text-primary" /> Generated Marketing Content
+                   <Megaphone className="h-5 w-5 text-primary" /> Promotional Content
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div className="space-y-4">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-primary">Instagram</Label>
-                      <p className="text-sm bg-white/50 p-4 rounded-2xl italic leading-relaxed">{details.marketing.instagram}</p>
+                      <Label className="text-xs font-bold uppercase tracking-widest text-primary">Instagram Post</Label>
+                      <div className="bg-white/60 p-5 rounded-2xl italic text-sm leading-relaxed border border-white">
+                        {details.marketing.instagram}
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {details.marketing.hashtags.map((tag: string) => (
+                            <span key={tag} className="text-primary font-bold">#{tag}</span>
+                          ))}
+                        </div>
+                      </div>
                    </div>
                    <div className="space-y-4">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-primary">WhatsApp</Label>
-                      <p className="text-sm bg-white/50 p-4 rounded-2xl leading-relaxed">{details.marketing.whatsapp}</p>
+                      <Label className="text-xs font-bold uppercase tracking-widest text-primary">WhatsApp Message</Label>
+                      <p className="text-sm bg-white/60 p-5 rounded-2xl leading-relaxed border border-white">{details.marketing.whatsapp}</p>
+                      <div className="bg-primary/10 p-4 rounded-xl">
+                        <p className="text-[10px] font-bold uppercase text-primary mb-1">Catchy Promo Line</p>
+                        <p className="text-sm font-bold">"{details.marketing.promoLine}"</p>
+                      </div>
                    </div>
                 </div>
               </Card>
             )}
 
-            <div className="flex gap-4 pt-4">
-              <Button variant="outline" className="flex-1 rounded-full h-16 border-2 gap-2" onClick={() => setStep(3)}>
-                <ArrowLeft className="h-5 w-5" /> Edit Details
+            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              <Button variant="outline" className="flex-1 rounded-full h-16 border-2 gap-2 text-lg" onClick={() => setStep(3)}>
+                <ArrowLeft className="h-5 w-5" /> Back to Edit
               </Button>
               <Button 
-                className="flex-1 rounded-full h-16 shadow-xl text-xl gap-2" 
-                onClick={handlePublish}
-                disabled={isPublishing}
+                variant="secondary"
+                className="flex-1 rounded-full h-16 border-2 gap-2 text-lg bg-white" 
+                onClick={() => handleSave('Draft')}
+                disabled={isSaving}
               >
-                {isPublishing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}
-                {isPublishing ? "Publishing..." : "Publish Craft"}
+                <Save className="h-5 w-5" /> Save as Draft
+              </Button>
+              <Button 
+                className="flex-[2] rounded-full h-16 shadow-2xl text-xl gap-2" 
+                onClick={() => handleSave('Published')}
+                disabled={isSaving}
+              >
+                {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}
+                {isSaving ? "Publishing..." : "Publish to Marketplace"}
               </Button>
             </div>
           </div>

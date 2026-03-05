@@ -36,19 +36,14 @@ const detectionPrompt = ai.definePrompt({
   prompt: `Analyze the provided image of a handcrafted product.
 Location: {{{location}}}
 
-Identify:
-1. The primary craft category.
-2. A descriptive, SEO-friendly product title.
-3. The materials visible in the craft.
-4. The specific regional or artistic style.
-5. A short, professional product description (2-3 sentences).
-6. A "Craft Story": 3-4 sentences max. 
-   - DO NOT FABRICATE personal or family history. 
-   - Provide general cultural context based ONLY on the craft type, region, and visible techniques.
-   - Example: "Blue pottery from Khurja is known for its vibrant glaze work and traditional patterns."
-7. Pricing: Suggest a realistic midpoint in INR based on material and craft complexity. 
-   - Provide a 2-sentence max reasoning.
-   - Explain how labor and material costs influence the price.
+Identify and generate:
+1. Detect Craft Category: One of Pottery, Textiles, Jewelry, Woodwork, Hand painting, or Other.
+2. Identify Materials: List visible materials used.
+3. Suggest Product Title: An SEO-friendly, catchy title.
+4. Analyze Craft Style: Specify the regional or artistic style.
+5. Generate Short Description: 2-3 professional sentences.
+6. Generate Craft Story: 3-4 sentences max. Provide general cultural context based ONLY on craft type and visible techniques. DO NOT FABRICATE personal history.
+7. Suggest Price Range: Provide a realistic midpoint in INR. Provide a 2-sentence max reasoning explaining labor and material influence.
 
 Product Image: {{media url=productImageDataUri}}`,
 });
@@ -60,11 +55,7 @@ const artisanAITypeDetectionFlow = ai.defineFlow(
     outputSchema: ArtisanAITypeDetectionOutputSchema,
   },
   async input => {
-    const {output} = await ai.generate({
-      prompt: detectionPrompt(input),
-      model: 'googleai/gemini-2.5-flash-image',
-      config: {responseModalities: ['TEXT']},
-    });
+    const {output} = await detectionPrompt(input);
     return output!;
   }
 );
