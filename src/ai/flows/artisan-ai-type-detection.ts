@@ -42,9 +42,13 @@ Identify:
 3. The materials visible in the craft.
 4. The specific regional or artistic style.
 5. A short, professional product description (2-3 sentences).
-6. A "Craft Story": 3-4 sentences max. Do NOT fabricate personal history. Provide cultural context based on the craft type and region.
-   Example: "Blue pottery from Khurja is known for its vibrant glaze work and traditional patterns."
-7. Pricing: Suggest a realistic midpoint in INR based on material and craft complexity. Provide a 2-sentence max reasoning.
+6. A "Craft Story": 3-4 sentences max. 
+   - DO NOT FABRICATE personal or family history. 
+   - Provide general cultural context based ONLY on the craft type, region, and visible techniques.
+   - Example: "Blue pottery from Khurja is known for its vibrant glaze work and traditional patterns."
+7. Pricing: Suggest a realistic midpoint in INR based on material and craft complexity. 
+   - Provide a 2-sentence max reasoning.
+   - Explain how labor and material costs influence the price.
 
 Product Image: {{media url=productImageDataUri}}`,
 });

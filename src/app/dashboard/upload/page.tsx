@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Camera, Sparkles, Check, Image as ImageIcon, Loader2, Save, Send, RefreshCw, Globe, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Camera, Sparkles, Check, Image as ImageIcon, Loader2, Save, Send, RefreshCw, Globe, ArrowRight, ArrowLeft, Megaphone } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { artisanAITypeDetection } from '@/ai/flows/artisan-ai-type-detection';
@@ -15,6 +15,10 @@ import { translateListing } from '@/ai/flows/translate-content-flow';
 import { generateMarketingContent } from '@/ai/flows/artisan-ai-marketing-generator';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { useFirestore, useUser } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useRouter } from 'next/navigation';
 
 type ProcessingStep = {
   id: number;
@@ -28,20 +32,24 @@ export default function ProductUploadPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isMarketingLoading, setIsMarketingLoading] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { toast } = useToast();
+  const db = useFirestore();
+  const { user } = useUser();
+  const router = useRouter();
 
   const [processingSteps, setProcessingSteps] = useState<ProcessingStep[]>([
     { id: 1, label: 'Detecting Craft Category', status: 'pending' },
     { id: 2, label: 'Identifying Materials', status: 'pending' },
     { id: 3, label: 'Suggesting Product Title', status: 'pending' },
-    { id: 4, label: 'Analyzing Craft Style', status: 'pending' },
-    { id: 5, label: 'Generating Description', status: 'pending' },
+    { id: 4, label: 'Generating Description', status: 'pending' },
+    { id: 5, label: 'Creating Craft Story', status: 'pending' },
     { id: 6, label: 'Calculating Price Guidance', status: 'pending' },
   ]);
 
   const [details, setDetails] = useState({
     title: '',
-    category: '',
+    category: 'Pottery',
     materials: '',
     style: '',
     region: 'Jaipur, Rajasthan',
@@ -64,10 +72,10 @@ export default function ProductUploadPage() {
         location: details.region
       });
 
-      // Simulate sequential visual feedback for UX
+      // Sequential visual feedback for UX
       for (let i = 0; i < processingSteps.length; i++) {
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'loading' } : s));
-        await new Promise(r => setTimeout(r, 600)); // Short delay for visual effect
+        await new Promise(r => setTimeout(r, 600)); 
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'complete' } : s));
       }
 
@@ -76,15 +84,15 @@ export default function ProductUploadPage() {
       setDetails({
         ...details,
         title: aiResult.suggestedTitle,
-        category: aiResult.craftType,
+        category: aiResult.craftType as any,
         materials: aiResult.suggestedMaterials,
         style: aiResult.craftStyle,
         description: aiResult.description,
         story: aiResult.craftStory,
         price: midpoint,
         priceRange: {
-          min: Math.round(midpoint * 0.9),
-          max: Math.round(midpoint * 1.1),
+          min: Math.round(midpoint * 0.9), // 10% lower
+          max: Math.round(midpoint * 1.1), // 10% higher
           reasoning: aiResult.pricing.reasoning
         }
       });
@@ -112,7 +120,6 @@ export default function ProductUploadPage() {
   };
 
   const handleTranslate = async (lang: string) => {
-    if (lang === 'English') return;
     setIsTranslating(true);
     try {
       const result = await translateListing({
@@ -153,6 +160,38 @@ export default function ProductUploadPage() {
     }
   };
 
+  const handlePublish = async () => {
+    if (!user || !db) return;
+    setIsPublishing(true);
+
+    const productData = {
+      artisanId: user.uid,
+      artisanName: user.displayName || 'Artisan',
+      productName: details.title,
+      description: details.description,
+      craftType: details.category,
+      craftStyle: details.style,
+      region: details.region,
+      materials: details.materials,
+      price: details.price,
+      availableQuantity: details.quantity,
+      images: image ? [image] : [],
+      story: details.story,
+      status: 'Published',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      marketing: details.marketing
+    };
+
+    const productsRef = collection(db, 'products');
+    addDocumentNonBlocking(productsRef, productData);
+    
+    toast({ title: "Product Published!", description: "Your craft is now live on the marketplace." });
+    setTimeout(() => {
+      router.push('/dashboard');
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen flex flex-col paper-texture">
       <Navbar />
@@ -166,10 +205,10 @@ export default function ProductUploadPage() {
             ))}
           </div>
           <h1 className="text-4xl font-headline font-bold">
-            {step === 1 && "Start with a Photo"}
+            {step === 1 && "Step 1: Start with a Photo"}
             {step === 2 && "Virasya AI Analyzing..."}
-            {step === 3 && "Refine Your Listing"}
-            {step === 4 && "Final Listing Preview"}
+            {step === 3 && "Step 2: Refine Your Listing"}
+            {step === 4 && "Step 3: Final Preview"}
           </h1>
         </div>
 
@@ -307,7 +346,7 @@ export default function ProductUploadPage() {
         )}
 
         {step === 4 && (
-          <div className="max-w-4xl mx-auto space-y-8">
+          <div className="max-w-4xl mx-auto space-y-8 pb-20">
             <div className="bg-white rounded-[50px] overflow-hidden shadow-xl border-none">
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="relative aspect-square">
@@ -351,8 +390,13 @@ export default function ProductUploadPage() {
               <Button variant="outline" className="flex-1 rounded-full h-16 border-2 gap-2" onClick={() => setStep(3)}>
                 <ArrowLeft className="h-5 w-5" /> Edit Details
               </Button>
-              <Button className="flex-1 rounded-full h-16 shadow-xl text-xl gap-2">
-                <Send className="h-6 w-6" /> Publish Listing
+              <Button 
+                className="flex-1 rounded-full h-16 shadow-xl text-xl gap-2" 
+                onClick={handlePublish}
+                disabled={isPublishing}
+              >
+                {isPublishing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}
+                {isPublishing ? "Publishing..." : "Publish Craft"}
               </Button>
             </div>
           </div>
