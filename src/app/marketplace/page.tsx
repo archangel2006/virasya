@@ -2,80 +2,21 @@
 "use client";
 
 import { useState, useMemo } from 'react';
-import { Search, Filter, SlidersHorizontal, ChevronDown, Sparkles } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, ChevronDown, Sparkles, Loader2 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { ProductCard } from '@/components/ProductCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
 import { Product } from '@/lib/types';
-
-const MOCK_PRODUCTS: Product[] = [
-  {
-    productId: '1',
-    artisanId: 'a1',
-    artisanName: 'Rajesh K.',
-    productName: 'Hand-carved Teak Box',
-    description: 'Intricately carved wooden box for valuables.',
-    craftType: 'Woodwork',
-    region: 'Saharanpur, UP',
-    materials: 'Teak Wood',
-    price: 3200,
-    currency: 'INR',
-    images: ['https://picsum.photos/seed/wood1/600/800'],
-    story: '...',
-    tags: ['wood', 'carving'],
-    createdAt: new Date()
-  },
-  {
-    productId: '2',
-    artisanId: 'a2',
-    artisanName: 'Lata B.',
-    productName: 'Kutch Embroidered Bag',
-    description: 'Colorful hand-embroidered bag from Gujarat.',
-    craftType: 'Textiles',
-    region: 'Kutch, Gujarat',
-    materials: 'Cotton, Mirrors',
-    price: 1500,
-    currency: 'INR',
-    images: ['https://picsum.photos/seed/bag1/600/800'],
-    story: '...',
-    tags: ['kutch', 'embroidery'],
-    createdAt: new Date()
-  },
-  {
-    productId: '3',
-    artisanId: 'a3',
-    artisanName: 'Amit S.',
-    productName: 'Kundan Earrings',
-    description: 'Exquisite jewelry for special occasions.',
-    craftType: 'Jewelry',
-    region: 'Jaipur, Rajasthan',
-    materials: 'Gold plated silver, Stones',
-    price: 4500,
-    currency: 'INR',
-    images: ['https://picsum.photos/seed/jwel1/600/800'],
-    story: '...',
-    tags: ['kundan', 'jewelry'],
-    createdAt: new Date()
-  },
-  {
-    productId: '4',
-    artisanId: 'a4',
-    artisanName: 'Sita M.',
-    productName: 'Dhokra Art Figurine',
-    description: 'Ancient lost-wax casting metal art.',
-    craftType: 'Other',
-    region: 'Bastar, Chhattisgarh',
-    materials: 'Brass',
-    price: 1800,
-    currency: 'INR',
-    images: ['https://picsum.photos/seed/metal1/600/800'],
-    story: '...',
-    tags: ['dhokra', 'brass'],
-    createdAt: new Date()
-  }
-];
 
 const CATEGORIES = ['All', 'Pottery', 'Textiles', 'Jewelry', 'Woodwork', 'Hand painting'];
 
@@ -83,39 +24,59 @@ export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('Newest');
+  const db = useFirestore();
+
+  // Fetch only Published products for the marketplace
+  const productsQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, 'products'), where('status', '==', 'Published'));
+  }, [db]);
+
+  const { data: products, isLoading } = useCollection<Product>(productsQuery);
 
   const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter(p => {
+    if (!products) return [];
+    return products.filter(p => {
       const matchesCategory = selectedCategory === 'All' || p.craftType === selectedCategory;
       const matchesSearch = p.productName.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             p.region.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, products]);
 
-  // AI Recommendations - Mocked for prototype
-  const recommendedProducts = MOCK_PRODUCTS.slice(0, 3);
+  // Sort logic (simple client-side sort for prototype)
+  const sortedProducts = useMemo(() => {
+    const sorted = [...filteredProducts];
+    if (sortBy === 'Price: Low to High') return sorted.sort((a, b) => a.price - b.price);
+    if (sortBy === 'Price: High to Low') return sorted.sort((a, b) => b.price - a.price);
+    return sorted; // 'Newest' is default from Firestore order if we add a created date, but for now we keep it
+  }, [filteredProducts, sortBy]);
 
   return (
     <div className="min-h-screen flex flex-col paper-texture">
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <header className="mb-12">
+        <header className="mb-12 text-center md:text-left">
           <h1 className="text-5xl font-headline font-bold mb-4">Discover Heritage</h1>
           <p className="text-xl text-muted-foreground">Authentic handcrafted art curated for the modern soul.</p>
         </header>
 
-        {/* AI Recommendations Section */}
+        {/* AI Recommendations Section - Mocked using real products for visual consistency */}
         <section className="mb-16 bg-white/50 p-8 rounded-[40px] border-none shadow-sm">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-6 w-6 text-primary" />
             <h2 className="text-2xl font-headline font-bold">Recommended for You</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recommendedProducts.map(p => (
-              <ProductCard key={`rec-${p.productId}`} product={p} />
+            {isLoading ? (
+              [1, 2, 3].map(i => <div key={i} className="aspect-[4/5] bg-secondary/20 animate-pulse rounded-[32px]" />)
+            ) : sortedProducts.slice(0, 3).map(p => (
+              <ProductCard key={`rec-${p.id}`} product={p} />
             ))}
+            {!isLoading && sortedProducts.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground italic">No recommendations yet.</p>
+            )}
           </div>
         </section>
 
@@ -153,21 +114,6 @@ export default function MarketplacePage() {
                 ))}
               </div>
             </div>
-
-            <div className="pt-8 border-t border-primary/10">
-              <h3 className="text-lg font-headline font-bold mb-4">Price</h3>
-              <div className="space-y-3">
-                {['Under ₹1000', '₹1000 - ₹3000', '₹3000+'].map(range => (
-                  <label key={range} className="flex items-center gap-3 text-sm cursor-pointer group">
-                    <div className="h-5 w-5 rounded-md border-2 border-primary/20 flex items-center justify-center group-hover:border-primary transition-colors">
-                      <div className="h-2 w-2 rounded-sm bg-primary opacity-0 group-has-[:checked]:opacity-100" />
-                    </div>
-                    <input type="checkbox" className="hidden" />
-                    <span className="text-muted-foreground group-hover:text-primary transition-colors">{range}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
           </aside>
 
           {/* Main Content Area */}
@@ -194,7 +140,7 @@ export default function MarketplacePage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="rounded-xl border-none shadow-xl">
                   {['Newest', 'Price: Low to High', 'Price: High to Low', 'Popularity'].map(sort => (
-                    <DropdownMenuItem key={sort} onClick={() => setSortBy(sort)} className="cursor-pointer">
+                    <DropdownMenuItem key={sort} onClick={() => setSortBy(sort)} className="cursor-pointer font-body">
                       {sort}
                     </DropdownMenuItem>
                   ))}
@@ -202,10 +148,14 @@ export default function MarketplacePage() {
               </DropdownMenu>
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center py-32">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              </div>
+            ) : sortedProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredProducts.map(p => (
-                  <ProductCard key={p.productId} product={p} />
+                {sortedProducts.map(p => (
+                  <ProductCard key={p.id} product={p} />
                 ))}
               </div>
             ) : (

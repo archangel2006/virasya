@@ -67,20 +67,17 @@ export default function ProductUploadPage() {
     setStep(2);
     
     try {
-      // Start AI vision analysis
       const aiResult = await artisanAITypeDetection({ 
         productImageDataUri: dataUri,
         location: details.region
       });
 
-      // Visual simulation of sequential processing for UX
       for (let i = 0; i < processingSteps.length; i++) {
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'loading' } : s));
-        await new Promise(r => setTimeout(r, 800)); 
+        await new Promise(r => setTimeout(r, 600)); 
         setProcessingSteps(prev => prev.map(s => s.id === i + 1 ? { ...s, status: 'complete' } : s));
       }
 
-      // Populate form state
       const midpoint = aiResult.pricing.suggestedMidpoint;
       setDetails({
         ...details,
@@ -92,15 +89,15 @@ export default function ProductUploadPage() {
         story: aiResult.craftStory,
         price: midpoint,
         priceRange: {
-          min: Math.round(midpoint * 0.9), // Narrow 10% variance
+          min: Math.round(midpoint * 0.9),
           max: Math.round(midpoint * 1.1),
           reasoning: aiResult.pricing.reasoning
         }
       });
 
-      setTimeout(() => setStep(3), 600);
+      setTimeout(() => setStep(3), 400);
     } catch (error) {
-      toast({ title: "AI Analysis failed", variant: "destructive" });
+      toast({ title: "AI Analysis failed", variant: "destructive", description: "Please try uploading a clearer photo." });
       setStep(1);
     } finally {
       setIsProcessing(false);
@@ -162,39 +159,58 @@ export default function ProductUploadPage() {
   };
 
   const handleSave = async (status: 'Draft' | 'Published') => {
-    if (!user || !db) return;
+    if (!user) {
+      toast({ 
+        title: "Authentication Required", 
+        description: "Please log in to save your crafts.",
+        variant: "destructive" 
+      });
+      router.push('/auth');
+      return;
+    }
+
+    if (!db) return;
     setIsSaving(true);
 
-    const productData = {
-      artisanId: user.uid,
-      artisanName: user.displayName || 'Authentic Artisan',
-      productName: details.title,
-      description: details.description,
-      craftType: details.category,
-      craftStyle: details.style,
-      region: details.region,
-      materials: details.materials,
-      price: details.price,
-      availableQuantity: details.quantity,
-      images: image ? [image] : [],
-      story: details.story,
-      status: status,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      marketing: details.marketing
-    };
+    try {
+      const productData = {
+        artisanId: user.uid,
+        artisanName: user.displayName || 'Authentic Artisan',
+        productName: details.title,
+        description: details.description,
+        craftType: details.category,
+        craftStyle: details.style,
+        region: details.region,
+        materials: details.materials,
+        price: Number(details.price),
+        availableQuantity: Number(details.quantity),
+        images: image ? [image] : [],
+        story: details.story,
+        status: status,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        marketing: details.marketing || null
+      };
 
-    const productsRef = collection(db, 'products');
-    addDocumentNonBlocking(productsRef, productData);
-    
-    toast({ 
-      title: status === 'Published' ? "Product Published!" : "Draft Saved!", 
-      description: status === 'Published' ? "Your craft is now live on the marketplace." : "You can find your draft in the hub."
-    });
-    
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 1500);
+      const productsRef = collection(db, 'products');
+      addDocumentNonBlocking(productsRef, productData);
+      
+      toast({ 
+        title: status === 'Published' ? "Product Published!" : "Draft Saved!", 
+        description: status === 'Published' ? "Your craft is now live on the marketplace." : "You can find your draft in the hub."
+      });
+      
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1500);
+    } catch (error) {
+      setIsSaving(false);
+      toast({ 
+        title: "Save failed", 
+        description: "An error occurred while saving. Please check your connection.",
+        variant: "destructive" 
+      });
+    }
   };
 
   return (
@@ -202,7 +218,6 @@ export default function ProductUploadPage() {
       <Navbar />
       
       <main className="container mx-auto px-4 py-8 flex-grow max-w-5xl">
-        {/* Step Progress Visuals */}
         <div className="mb-12">
           <div className="flex items-center gap-4 mb-4">
             {[1, 2, 3, 4].map(i => (
@@ -247,7 +262,7 @@ export default function ProductUploadPage() {
         )}
 
         {step === 3 && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4">
             <div className="lg:col-span-1 space-y-6">
               <Card className="overflow-hidden border-none shadow-sm rounded-3xl bg-white aspect-[3/4] relative">
                 {image && <img src={image} alt="Uploaded Craft" className="w-full h-full object-cover" />}
@@ -351,7 +366,7 @@ export default function ProductUploadPage() {
         )}
 
         {step === 4 && (
-          <div className="max-w-4xl mx-auto space-y-8 pb-24">
+          <div className="max-w-4xl mx-auto space-y-8 pb-24 animate-in zoom-in-95">
             <div className="bg-white rounded-[50px] overflow-hidden shadow-xl border-none">
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="relative aspect-square">
