@@ -7,7 +7,7 @@ export interface UserProfile {
   email: string;
   role: UserRole;
   location?: string;
-  preferredLanguage: 'en' | 'hi';
+  preferredLanguage: 'en' | 'hi' | 'ta' | 'bn';
   profilePhoto?: string;
 }
 
@@ -18,12 +18,15 @@ export interface Product {
   productName: string;
   description: string;
   craftType: 'Pottery' | 'Textiles' | 'Jewelry' | 'Woodwork' | 'Hand painting' | 'Other';
+  craftStyle?: string;
   region: string;
   materials: string;
   price: number;
+  priceRange?: { min: number; max: number; reasoning: string };
   currency: string;
   images: string[];
   story: string;
+  culturalNote?: string;
   tags: string[];
   createdAt: Date;
 }

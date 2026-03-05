@@ -3,13 +3,27 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Search, User, Store, Sparkles, Menu, X, Globe } from 'lucide-react';
+import { Search, User, Store, Sparkles, Menu, X, Globe, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'ta', label: 'தமிழ்' },
+  { code: 'bn', label: 'বাংলা' },
+];
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [lang, setLang] = useState('en');
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -39,10 +53,24 @@ export function Navbar() {
               Artisan Hub
             </Link>
             <div className="h-6 w-[1px] bg-border mx-2" />
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Globe className="h-4 w-4" />
-              EN
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 rounded-full border border-primary/10">
+                  <Globe className="h-4 w-4 text-primary" />
+                  {LANGUAGES.find(l => l.code === lang)?.label}
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl border-none shadow-xl">
+                {LANGUAGES.map((l) => (
+                  <DropdownMenuItem key={l.code} onClick={() => setLang(l.code)} className="cursor-pointer">
+                    {l.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link href="/auth">
               <Button size="sm" className="rounded-full px-6">Login</Button>
             </Link>
@@ -78,14 +106,24 @@ export function Navbar() {
             <Link href="/marketplace" className="px-2 py-2 text-lg font-medium">Marketplace</Link>
             <Link href="/dashboard" className="px-2 py-2 text-lg font-medium">Artisan Hub</Link>
             <Link href="/profile" className="px-2 py-2 text-lg font-medium">My Profile</Link>
-            <div className="flex items-center justify-between pt-4 border-t px-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Globe className="h-4 w-4" />
-                Language: EN
-              </Button>
-              <Link href="/auth">
-                <Button size="sm" className="rounded-full">Get Started</Button>
-              </Link>
+            <div className="flex flex-col gap-2 pt-4 border-t px-2">
+               <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Language</p>
+               <div className="grid grid-cols-2 gap-2">
+                 {LANGUAGES.map(l => (
+                   <Button 
+                    key={l.code} 
+                    variant={lang === l.code ? "default" : "outline"} 
+                    size="sm" 
+                    onClick={() => setLang(l.code)}
+                    className="rounded-full h-8 text-xs"
+                   >
+                     {l.label}
+                   </Button>
+                 ))}
+               </div>
+               <Link href="/auth" className="mt-4">
+                <Button size="lg" className="w-full rounded-full">Get Started</Button>
+               </Link>
             </div>
           </div>
         )}
