@@ -8,15 +8,19 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const TranslationInputSchema = z.object({
-  text: z.string(),
-  targetLanguage: z.enum(['Hindi', 'Tamil', 'Bengali', 'English']),
+  title: z.string(),
+  description: z.string(),
+  story: z.string(),
+  targetLanguage: z.enum(['Hindi', 'Tamil', 'Bengali', 'Marathi', 'English']),
 });
 
 const TranslationOutputSchema = z.object({
-  translatedText: z.string(),
+  translatedTitle: z.string(),
+  translatedDescription: z.string(),
+  translatedStory: z.string(),
 });
 
-export async function translateContent(input: z.infer<typeof TranslationInputSchema>) {
+export async function translateListing(input: z.infer<typeof TranslationInputSchema>) {
   return translationFlow(input);
 }
 
@@ -24,11 +28,13 @@ const translationPrompt = ai.definePrompt({
   name: 'translationPrompt',
   input: {schema: TranslationInputSchema},
   output: {schema: TranslationOutputSchema},
-  prompt: `Translate the following text to {{{targetLanguage}}}. 
-Maintain the cultural nuances, emotional tone, and artisan-focused language of the original text. 
-Do not be overly literal; ensure it sounds natural and respectful in the target language.
+  prompt: `Translate the following product listing content to {{{targetLanguage}}}. 
+Maintain the cultural nuances and artisan-focused language. 
+Do NOT translate specific names of regions or people unless necessary for context.
 
-Text: {{{text}}}`,
+Title: {{{title}}}
+Description: {{{description}}}
+Story: {{{story}}}`,
 });
 
 const translationFlow = ai.defineFlow(

@@ -11,20 +11,14 @@ const MarketingInputSchema = z.object({
   productName: z.string(),
   craftType: z.string(),
   region: z.string(),
-  storySnippet: z.string(),
+  description: z.string(),
 });
 
 const MarketingOutputSchema = z.object({
-  instagram: z.object({
-    caption: z.string(),
-    hashtags: z.array(z.string()),
-  }),
-  facebook: z.object({
-    post: z.string(),
-  }),
-  whatsapp: z.object({
-    message: z.string(),
-  }),
+  instagram: z.string().describe('Max 60 words.'),
+  whatsapp: z.string().describe('Max 25 words.'),
+  hashtags: z.array(z.string()).describe('8-10 tags.'),
+  promoLine: z.string().describe('A catchy short line.'),
 });
 
 export async function generateMarketingContent(input: z.infer<typeof MarketingInputSchema>) {
@@ -36,14 +30,19 @@ const marketingPrompt = ai.definePrompt({
   input: {schema: MarketingInputSchema},
   output: {schema: MarketingOutputSchema},
   prompt: `Generate promotional social media content for this artisan product. 
-The tone should be warm, storytelling-focused, and premium.
 
 Product: {{{productName}}}
 Craft: {{{craftType}}}
 Region: {{{region}}}
-Story: {{{storySnippet}}}
+Description: {{{description}}}
 
-Include an Instagram caption with relevant hashtags, a Facebook post that invites engagement, and a concise WhatsApp message for direct sharing.`,
+Requirements:
+- Instagram caption: Max 60 words.
+- WhatsApp message: Max 25 words.
+- Hashtags: 8-10 relevant tags.
+- Promo Line: A short, punchy one-liner.
+
+Tone: Warm, authentic, premium.`,
 });
 
 const marketingGeneratorFlow = ai.defineFlow(

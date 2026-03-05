@@ -7,8 +7,15 @@ export interface UserProfile {
   email: string;
   role: UserRole;
   location?: string;
-  preferredLanguage: 'en' | 'hi' | 'ta' | 'bn';
+  preferredLanguage: 'en' | 'hi' | 'ta' | 'bn' | 'mr';
   profilePhoto?: string;
+}
+
+export interface MarketingContent {
+  instagram: string;
+  whatsapp: string;
+  hashtags: string[];
+  promoLine: string;
 }
 
 export interface Product {
@@ -22,18 +29,17 @@ export interface Product {
   region: string;
   materials: string;
   price: number;
-  priceRange?: { min: number; max: number; reasoning: string };
+  availableQuantity: number;
+  priceRange?: { 
+    min: number; 
+    max: number; 
+    reasoning: string 
+  };
   currency: string;
   images: string[];
   story: string;
   culturalNote?: string;
   tags: string[];
+  marketing?: MarketingContent;
   createdAt: Date;
-}
-
-export interface BrowsingHistory {
-  userId: string;
-  viewedProductIds: string[];
-  searchQueries: string[];
-  timestamp: Date;
 }
