@@ -13,9 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import { doc } from 'firebase/firestore';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -30,14 +31,25 @@ export function Navbar() {
   const [lang, setLang] = useState('en');
   
   const { user } = useUser();
+  const db = useFirestore();
   const auth = useAuth();
   const router = useRouter();
+
+  // Fetch the user's profile to get their real name
+  const profileRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, 'userProfiles', user.uid);
+  }, [db, user]);
+
+  const { data: profile } = useDoc(profileRef);
 
   const handleLogout = async () => {
     if (!auth) return;
     await signOut(auth);
     router.push('/');
   };
+
+  const displayName = profile?.name || user?.displayName || user?.email?.split('@')[0] || 'User';
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -90,9 +102,9 @@ export function Navbar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 border border-primary/20">
                     <Avatar className="h-full w-full">
-                      <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+                      <AvatarImage src={user.photoURL || undefined} alt={displayName} />
                       <AvatarFallback className="bg-primary/5 text-primary">
-                        {user.displayName?.charAt(0) || <User className="h-4 w-4" />}
+                        {displayName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -100,7 +112,7 @@ export function Navbar() {
                 <DropdownMenuContent className="w-56 rounded-2xl shadow-xl border-none p-2" align="end">
                   <div className="flex items-center justify-start gap-2 p-3">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-bold leading-none font-headline">{user.displayName || 'Artisan'}</p>
+                      <p className="text-sm font-bold leading-none font-headline">{displayName}</p>
                       <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                     </div>
                   </div>
