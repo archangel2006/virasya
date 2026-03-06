@@ -23,6 +23,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   const { data: product, isLoading, error } = useDoc<Product>(productRef);
 
+  // Fetch the artisan's profile dynamically using the ID from the product
+  const artisanRef = useMemoFirebase(() => {
+    if (!db || !product?.artisanId) return null;
+    return doc(db, 'userProfiles', product.artisanId);
+  }, [db, product?.artisanId]);
+
+  const { data: artisanProfile } = useDoc(artisanRef);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col paper-texture">
@@ -51,6 +59,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       </div>
     );
   }
+
+  const artisanName = artisanProfile?.name || product.artisanName || 'Authentic Artisan';
+  const artisanPhoto = artisanProfile?.profilePhotoUrl || `https://picsum.photos/seed/${product.artisanId}/100/100`;
 
   return (
     <div className="min-h-screen flex flex-col paper-texture">
@@ -105,12 +116,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="h-14 w-14 rounded-full relative overflow-hidden border-2 border-primary/20 bg-secondary">
-                    {/* Placeholder for artisan photo - can be updated to real profile photo if available */}
-                    <Image src={`https://picsum.photos/seed/${product.artisanId}/100/100`} alt="Artisan" fill className="object-cover" />
+                    <Image src={artisanPhoto} alt={artisanName} fill className="object-cover" />
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Master Artisan</p>
-                    <p className="text-xl font-headline font-bold text-primary">{product.artisanName || 'Authentic Artisan'}</p>
+                    <p className="text-xl font-headline font-bold text-primary">{artisanName}</p>
                   </div>
                 </div>
                 <Button variant="outline" size="sm" className="rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white">View Profile</Button>
