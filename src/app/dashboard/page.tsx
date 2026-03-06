@@ -4,13 +4,21 @@
 import Link from 'next/link';
 import { 
   Plus, Package, Trash2, Share2, Loader2, 
-  TrendingUp, Eye, Globe, PackageCheck
+  TrendingUp, Eye, Globe, PackageCheck,
+  BookOpen, Sparkles, Camera
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger, 
+  DialogDescription 
+} from '@/components/ui/dialog';
 import Image from 'next/image';
 import { useState } from 'react';
 import { generateMarketingContent } from '@/ai/flows/artisan-ai-marketing-generator';
@@ -262,7 +270,55 @@ export default function ArtisanDashboard() {
                   </p>
                 </div>
               </div>
-              <Button variant="outline" className="w-full rounded-full mt-8 h-12 border-primary/20 hover:bg-primary/5 text-primary">View Seller Guide</Button>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full rounded-full mt-8 h-12 border-primary/20 hover:bg-primary/5 text-primary">View Seller Guide</Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl rounded-[40px] border-none shadow-2xl p-10">
+                  <DialogHeader>
+                    <div className="bg-primary/10 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
+                      <BookOpen className="h-6 w-6 text-primary" />
+                    </div>
+                    <DialogTitle className="text-3xl font-headline text-primary">Artisan Success Guide</DialogTitle>
+                    <DialogDescription className="text-lg">Master the Virasya platform and reach global buyers.</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-6 mt-6 max-h-[60vh] overflow-y-auto pr-2">
+                    <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
+                      <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                        <Camera className="h-5 w-5" /> 1. Quality Visuals
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Upload clear, well-lit photos of your craft. Our AI works best when it can see textures and colors clearly to detect materials and craft styles accurately.
+                      </p>
+                    </div>
+                    <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
+                      <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                        <Sparkles className="h-5 w-5" /> 2. AI Storytelling
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Use the 'Draft' mode to refine AI-generated stories. The AI ensures cultural authenticity by referencing regional heritage, but your specific artisan journey makes it compelling.
+                      </p>
+                    </div>
+                    <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
+                      <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5" /> 3. Smart Pricing
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        The AI Price Advisor considers labor hours and material costs. Use the suggested midpoint as a benchmark for competitive global pricing.
+                      </p>
+                    </div>
+                    <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
+                      <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                        <Globe className="h-5 w-5" /> 4. Reach New Markets
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Instantly translate listings into regional languages. Our marketing generator also creates ready-to-use posts for Instagram and WhatsApp to boost your shop's visibility.
+                      </p>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </Card>
           </div>
         </div>
