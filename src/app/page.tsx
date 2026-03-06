@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, ShieldCheck, Heart, Leaf } from 'lucide-react';
@@ -9,7 +8,7 @@ import { Product } from '@/lib/types';
 
 const featuredProducts: Product[] = [
   {
-    productId: '1',
+    id: '1',
     artisanId: 'a1',
     productName: 'Terracotta Blue Glaze Bowl',
     description: 'A masterpiece of traditional pottery from Khurja.',
@@ -17,14 +16,16 @@ const featuredProducts: Product[] = [
     region: 'Khurja, Uttar Pradesh',
     materials: 'Natural clay, mineral glazes',
     price: 1200,
-    currency: 'INR',
     images: ['https://picsum.photos/seed/pot1/600/800'],
     story: 'Hand-shaped on a traditional kick wheel...',
     tags: ['pottery', 'decor', 'handmade'],
-    createdAt: new Date()
+    status: 'Published',
+    availableQuantity: 5,
+    createdAt: new Date(),
+    updatedAt: new Date()
   },
   {
-    productId: '2',
+    id: '2',
     artisanId: 'a2',
     productName: 'Chanderi Silk Stole',
     description: 'Light as air silk stole with zari borders.',
@@ -32,14 +33,16 @@ const featuredProducts: Product[] = [
     region: 'Chanderi, Madhya Pradesh',
     materials: 'Pure Silk, Zari',
     price: 2500,
-    currency: 'INR',
     images: ['https://picsum.photos/seed/tex1/600/800'],
     story: 'Woven by weavers in the historic town of Chanderi...',
     tags: ['silk', 'scarf', 'handloom'],
-    createdAt: new Date()
+    status: 'Published',
+    availableQuantity: 3,
+    createdAt: new Date(),
+    updatedAt: new Date()
   },
   {
-    productId: '3',
+    id: '3',
     artisanId: 'a3',
     productName: 'Handpainted Madhubani Tray',
     description: 'Wooden tray with vibrant Madhubani folklore.',
@@ -47,11 +50,13 @@ const featuredProducts: Product[] = [
     region: 'Mithila, Bihar',
     materials: 'Wood, Natural dyes',
     price: 1800,
-    currency: 'INR',
     images: ['https://picsum.photos/seed/paint1/600/800'],
     story: 'Each stroke tells a story of ancient Indian myths...',
     tags: ['art', 'kitchen', 'painting'],
-    createdAt: new Date()
+    status: 'Published',
+    availableQuantity: 8,
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
@@ -65,9 +70,9 @@ export default function Home() {
         <section className="relative py-20 lg:py-32 overflow-hidden hero-gradient">
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl">
-              <Badge variant="secondary" className="mb-6 px-4 py-1 rounded-full text-primary border-primary/20 bg-primary/5">
+              <div className="inline-flex items-center rounded-full border px-4 py-1 text-xs font-semibold mb-6 text-primary border-primary/20 bg-primary/5">
                 Heritage Craft Meets AI
-              </Badge>
+              </div>
               <h1 className="text-5xl lg:text-7xl font-headline font-bold text-foreground mb-6 leading-tight">
                 Empowering Artisans, <br />
                 <span className="text-primary">Preserving Heritage.</span>
@@ -120,7 +125,7 @@ export default function Home() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.map((p) => (
-                <ProductCard key={p.productId} product={p} />
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           </div>
@@ -219,14 +224,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function Badge({ children, variant = "default", className = "" }: { children: React.ReactNode, variant?: string, className?: string }) {
-  return (
-    <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`}>
-      {children}
     </div>
   );
 }

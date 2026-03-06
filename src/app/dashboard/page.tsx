@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -33,7 +32,6 @@ export default function ArtisanDashboard() {
   const [isMarketingLoading, setIsMarketingLoading] = useState(false);
   const [marketingResult, setMarketingResult] = useState<any>(null);
 
-  // Fetch the user's specific profile to get their full name
   const profileRef = useMemoFirebase(() => {
     if (!db || !user) return null;
     return doc(db, 'userProfiles', user.uid);
@@ -125,7 +123,6 @@ export default function ArtisanDashboard() {
           </Link>
         </div>
 
-        {/* Stats Grid - Compact and Professional */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {stats.map((stat, i) => (
             <Card key={i} className="border-none shadow-sm rounded-[24px] overflow-hidden bg-white">

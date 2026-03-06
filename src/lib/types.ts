@@ -1,4 +1,3 @@
-
 export type UserRole = 'artisan' | 'buyer';
 
 export interface UserProfile {
