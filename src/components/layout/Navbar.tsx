@@ -1,17 +1,21 @@
-
 "use client";
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Search, User, Store, Sparkles, Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Search, User, Store, Sparkles, Menu, X, Globe, ChevronDown, LogOut, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -24,6 +28,16 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [lang, setLang] = useState('en');
+  
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (!auth) return;
+    await signOut(auth);
+    router.push('/');
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -71,9 +85,50 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link href="/auth">
-              <Button size="sm" className="rounded-full px-6">Login</Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 border border-primary/20">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+                      <AvatarFallback className="bg-primary/5 text-primary">
+                        {user.displayName?.charAt(0) || <User className="h-4 w-4" />}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-2xl shadow-xl border-none p-2" align="end">
+                  <div className="flex items-center justify-start gap-2 p-3">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-bold leading-none font-headline">{user.displayName || 'Artisan'}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator className="bg-secondary/50" />
+                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
+                    <Link href="/dashboard" className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      Artisan Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
+                    <Link href="/marketplace" className="flex items-center gap-2">
+                      <Package className="h-4 w-4 text-primary" />
+                      My Purchases
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-secondary/50" />
+                  <DropdownMenuItem onClick={handleLogout} className="rounded-xl cursor-pointer py-2.5 text-destructive focus:text-destructive focus:bg-destructive/5">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth">
+                <Button size="sm" className="rounded-full px-8 h-10 shadow-lg shadow-primary/20">Login</Button>
+              </Link>
+            )}
           </div>
 
           <div className="flex md:hidden items-center gap-2">
@@ -105,7 +160,9 @@ export function Navbar() {
           <div className="md:hidden pb-6 border-t mt-2 flex flex-col gap-4 py-4 animate-in slide-in-from-top-2">
             <Link href="/marketplace" className="px-2 py-2 text-lg font-medium">Marketplace</Link>
             <Link href="/dashboard" className="px-2 py-2 text-lg font-medium">Artisan Hub</Link>
-            <Link href="/profile" className="px-2 py-2 text-lg font-medium">My Profile</Link>
+            {user && (
+              <button onClick={handleLogout} className="px-2 py-2 text-lg font-medium text-destructive text-left">Logout</button>
+            )}
             <div className="flex flex-col gap-2 pt-4 border-t px-2">
                <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Language</p>
                <div className="grid grid-cols-2 gap-2">
@@ -121,9 +178,11 @@ export function Navbar() {
                    </Button>
                  ))}
                </div>
-               <Link href="/auth" className="mt-4">
-                <Button size="lg" className="w-full rounded-full">Get Started</Button>
-               </Link>
+               {!user && (
+                <Link href="/auth" className="mt-4">
+                  <Button size="lg" className="w-full rounded-full">Get Started</Button>
+                </Link>
+               )}
             </div>
           </div>
         )}

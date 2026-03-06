@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -124,7 +123,7 @@ export default function ArtisanDashboard() {
                 </div>
                 <div>
                   <p className="text-sm font-headline text-muted-foreground mb-1">{stat.label}</p>
-                  <p className="text-2xl font-headline font-bold text-foreground flex items-baseline">
+                  <p className="text-2xl font-sans font-bold text-foreground flex items-baseline">
                     {stat.isCurrency && (
                       <span className="font-sans text-xl mr-1 text-primary">₹</span>
                     )}
