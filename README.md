@@ -1,50 +1,48 @@
 # Virasya — AI-Powered Heritage Marketplace
 
-Virasya is a digital bridge for Indian artisans, combining centuries-old craftsmanship with cutting-edge Generative AI. It empowers creators to reach a global audience while preserving the cultural authenticity of their work.
+Virasya is a real, functional prototype that connects Indian artisans with global buyers. It uses Firebase for data/auth and Google Genkit (Gemini) for its AI features.
 
-## 🌟 Key Features
+## 🚀 Architecture Overview
 
-- **AI Vision Pipeline**: Automatically detects craft categories, materials, and styles from a single photo.
-- **Authentic Storytelling**: Generates factual heritage narratives based on regional context without fabricating history.
-- **Smart Pricing Guidance**: Provides realistic market ranges (midpoint ±10%) based on labor and materials.
-- **Multilingual Support**: Real-time translation of listings into Hindi, Tamil, Bengali, Marathi, and English.
-- **Social Media Generator**: One-click creation of Instagram, WhatsApp, and promotional content.
-- **Heritage Marketplace**: A curated discovery platform for buyers seeking authentic, verified handcrafted art.
+Everything in this app is **real and functional**, not dummy data.
 
-## 🛠 Tech Stack
+- **Frontend**: Next.js 15 (App Router) with Tailwind CSS & ShadCN UI.
+- **Authentication**: Real Firebase Auth (Google & Email/Password).
+- **Database**: Real-time Firestore database.
+- **AI Engine**: Google Genkit + Gemini 2.5 Flash for Vision, Translation, and Content Generation.
 
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS & ShadCN UI
-- **AI Orchestration**: Google Genkit
-- **LLM**: Gemini 2.5 Flash (Vision & Text)
-- **Backend**: Firebase (Firestore, Authentication)
-- **Hosting**: Firebase App Hosting
+## 🛠 Local Setup (How to implement it)
 
-## 🚀 Getting Started
+To run this locally, you need a Firebase project.
 
-1. **Environment Setup**:
-   Ensure your `.env` file contains your `GEMINI_API_KEY`.
+1.  **Firebase Console**:
+    - Create a project at [console.firebase.google.com](https://console.firebase.google.com).
+    - Enable **Authentication** (Google and Email/Password providers).
+    - Enable **Cloud Firestore** in "Test Mode" (for development).
+2.  **Configuration**:
+    - Create a "Web App" in your Firebase project.
+    - Copy the `firebaseConfig` object into `src/firebase/config.ts`.
+3.  **Environment Variables**:
+    - Create a `.env` file in the root.
+    - Add `GEMINI_API_KEY=your_google_ai_studio_key`. Get it from [aistudio.google.com](https://aistudio.google.com).
+4.  **Install & Run**:
+    ```bash
+    npm install
+    npm run dev
+    ```
 
-2. **Installation**:
-   ```bash
-   npm install
-   ```
+## 🌐 Deployment (Alternatives to Google Cloud)
 
-3. **Development**:
-   ```bash
-   npm run dev
-   ```
+Since you want to avoid Google Cloud's premium features, **Vercel** is the best alternative:
 
-4. **Genkit UI** (Optional):
-   To test AI flows in isolation:
-   ```bash
-   npm run genkit:dev
-   ```
+1.  **Connect to GitHub**: Push your code to a GitHub repo.
+2.  **Vercel Import**: Import the repo into Vercel.
+3.  **Environment Variables**: In Vercel's project settings, add:
+    - `GEMINI_API_KEY`: Your Gemini key.
+    - `NEXT_PUBLIC_FIREBASE_CONFIG`: (Optional) If you want to externalize your Firebase config.
+4.  **Firestore Rules**: Ensure you deploy the rules in `firestore.rules` via the Firebase Console so your data is secure.
 
-## 📂 Architecture
-
-- `src/ai/flows`: Genkit AI logic (Vision, Translation, Marketing).
-- `src/app/dashboard`: Artisan seller tools and upload workflow.
-- `src/app/marketplace`: Buyer discovery and product details.
-- `src/components/ui`: Thematic ShadCN components.
-- `src/firebase`: Real-time data synchronization and auth hooks.
+## 📂 Documentation
+- `docs/DATABASE.md`: Deep dive into Firestore structure.
+- `docs/AI_INTEGRATIONS.md`: How Genkit flows work.
+- `docs/DESIGN.md`: The artisan-focused design language.

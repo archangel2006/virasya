@@ -1,27 +1,26 @@
-# Deployment Guide
+# Deployment Alternatives
 
-Virasya is designed to be deployed via **Firebase App Hosting**, which provides seamless integration with Next.js and environment variable management.
+While the project is configured for Firebase App Hosting, you can easily deploy to **Vercel** or **Netlify** to avoid Google Cloud's premium tier requirements.
 
-## 📦 Deployment Steps
+## 🔼 Vercel Deployment (Recommended)
 
-1. **Connect Repository**: Connect your GitHub repository to the Firebase Console under the "App Hosting" tab.
-2. **Configure Environment Variables**:
-   - Navigate to the App Hosting settings in the Firebase Console.
-   - Add `GEMINI_API_KEY` to the environment variables.
-3. **App Hosting Configuration**:
-   The `apphosting.yaml` file is already configured for optimal performance:
-   ```yaml
-   runConfig:
-     maxInstances: 1 # Scalable for prototypes
-   ```
+1.  **Environment Variables**:
+    Go to your Project Settings > Environment Variables and add:
+    - `GEMINI_API_KEY`: Your key from AI Studio.
+    - `NEXT_PUBLIC_FIREBASE_API_KEY`, etc.: (Optional) If you want to move `firebaseConfig` out of the source code.
 
-## 🧪 Production Environment
+2.  **Build Settings**:
+    Next.js defaults are perfect. Vercel will automatically detect the App Router.
 
-- **Database**: Firestore (Production Mode)
-- **Auth**: Google & Email/Password providers enabled.
-- **Images**: Remote patterns are configured in `next.config.ts` to allow `picsum.photos` and Unsplash for placeholders.
+3.  **Authentication**:
+    In your Firebase Console, add your Vercel deployment URL (e.g., `virasya.vercel.app`) to the **Authorized Domains** list in the Authentication settings. This is required for Google Sign-In to work.
 
-## ⚠️ Known Limits
+## 📦 Local Deployment Preview
+To test a production build locally:
+```bash
+npm run build
+npm run start
+```
 
-- **Veo Video Generation**: Currently not active in the main flow due to low rate limits on preview models; however, the framework is ready for integration.
-- **Storage**: For the prototype, images are handled as Base64 strings in Firestore. For production scale, move to Firebase Storage.
+## ⚠️ Database Security
+Before going live, ensure your `firestore.rules` are published via the Firebase Console to prevent unauthorized data access.
