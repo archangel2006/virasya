@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI agent for detecting craft details and generating initial listing data.
@@ -13,7 +12,18 @@ const ArtisanAITypeDetectionInputSchema = z.object({
 });
 
 const ArtisanAITypeDetectionOutputSchema = z.object({
-  craftType: z.enum(['Pottery', 'Textiles', 'Jewelry', 'Woodwork', 'Hand painting', 'Other']),
+  craftType: z.enum([
+    'Pottery', 
+    'Textiles', 
+    'Jewelry', 
+    'Woodwork', 
+    'Hand painting', 
+    'Paper Mache', 
+    'Metalwork', 
+    'Leatherwork', 
+    'Bamboo & Cane', 
+    'Other'
+  ]),
   suggestedTitle: z.string(),
   suggestedMaterials: z.string(),
   craftStyle: z.string(),
@@ -37,7 +47,7 @@ const detectionPrompt = ai.definePrompt({
 Location: {{{location}}}
 
 Identify and generate:
-1. Detect Craft Category: One of Pottery, Textiles, Jewelry, Woodwork, Hand painting, or Other.
+1. Detect Craft Category: One of Pottery, Textiles, Jewelry, Woodwork, Hand painting, Paper Mache, Metalwork, Leatherwork, Bamboo & Cane, or Other.
 2. Identify Materials: List visible materials used.
 3. Suggest Product Title: An SEO-friendly, catchy title.
 4. Analyze Craft Style: Specify the regional or artistic style.

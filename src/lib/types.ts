@@ -23,7 +23,7 @@ export interface Product {
   artisanName?: string;
   productName: string;
   description: string;
-  craftType: 'Pottery' | 'Textiles' | 'Jewelry' | 'Woodwork' | 'Hand painting' | 'Other';
+  craftType: 'Pottery' | 'Textiles' | 'Jewelry' | 'Woodwork' | 'Hand painting' | 'Paper Mache' | 'Metalwork' | 'Leatherwork' | 'Bamboo & Cane' | 'Other';
   craftStyle?: string;
   region: string;
   materials: string;

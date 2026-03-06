@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo } from 'react';
@@ -18,7 +17,18 @@ import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import { Product } from '@/lib/types';
 
-const CATEGORIES = ['All', 'Pottery', 'Textiles', 'Jewelry', 'Woodwork', 'Hand painting'];
+const CATEGORIES = [
+  'All', 
+  'Pottery', 
+  'Textiles', 
+  'Jewelry', 
+  'Woodwork', 
+  'Hand painting', 
+  'Paper Mache', 
+  'Metalwork', 
+  'Leatherwork', 
+  'Bamboo & Cane'
+];
 
 export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -49,7 +59,7 @@ export default function MarketplacePage() {
     const sorted = [...filteredProducts];
     if (sortBy === 'Price: Low to High') return sorted.sort((a, b) => a.price - b.price);
     if (sortBy === 'Price: High to Low') return sorted.sort((a, b) => b.price - a.price);
-    return sorted; // 'Newest' is default from Firestore order if we add a created date, but for now we keep it
+    return sorted; 
   }, [filteredProducts, sortBy]);
 
   return (
@@ -62,7 +72,7 @@ export default function MarketplacePage() {
           <p className="text-xl text-muted-foreground">Authentic handcrafted art curated for the modern soul.</p>
         </header>
 
-        {/* AI Recommendations Section - Mocked using real products for visual consistency */}
+        {/* AI Recommendations Section */}
         <section className="mb-16 bg-white/50 p-8 rounded-[40px] border-none shadow-sm">
           <div className="flex items-center gap-2 mb-8">
             <Sparkles className="h-6 w-6 text-primary" />

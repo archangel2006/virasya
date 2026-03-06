@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -26,8 +25,21 @@ type ProcessingStep = {
   status: 'pending' | 'loading' | 'complete';
 };
 
+const CRAFT_CATEGORIES = [
+  'Pottery', 
+  'Textiles', 
+  'Jewelry', 
+  'Woodwork', 
+  'Hand painting', 
+  'Paper Mache', 
+  'Metalwork', 
+  'Leatherwork', 
+  'Bamboo & Cane', 
+  'Other'
+];
+
 export default function ProductUploadPage() {
-  const [step, setStep] = useState(1); // 1: Upload, 2: AI Processing, 3: Edit Form, 4: Preview
+  const [step, setStep] = useState(1); 
   const [image, setImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -224,7 +236,7 @@ export default function ProductUploadPage() {
               <div key={i} className={`h-1.5 flex-1 rounded-full transition-all duration-700 ${step >= i ? 'bg-primary' : 'bg-secondary'}`} />
             ))}
           </div>
-          <h1 className="text-4xl font-headline font-bold">
+          <h1 className="text-4xl font-headline font-bold text-foreground">
             {step === 1 && "Step 1: Upload Craft Photo"}
             {step === 2 && "Virasya AI Analyzing..."}
             {step === 3 && "Step 2: Review & Edit Listing"}
@@ -276,7 +288,10 @@ export default function ProductUploadPage() {
                 <h3 className="font-headline font-bold text-primary mb-3 flex items-center gap-2">
                   <Sparkles className="h-4 w-4" /> AI Pricing Guidance
                 </h3>
-                <p className="text-2xl font-headline font-bold text-primary mb-2">₹{details.priceRange.min} - ₹{details.priceRange.max}</p>
+                <p className="text-2xl font-headline font-bold text-primary mb-2 flex items-baseline">
+                   <span className="text-lg mr-1 font-sans">₹</span>
+                   {details.priceRange.min} - {details.priceRange.max}
+                </p>
                 <p className="text-xs text-muted-foreground leading-relaxed italic">"{details.priceRange.reasoning}"</p>
               </div>
               
@@ -316,7 +331,7 @@ export default function ProductUploadPage() {
                       <Select value={details.category} onValueChange={v => setDetails({...details, category: v})}>
                         <SelectTrigger className="rounded-xl h-12"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {['Pottery', 'Textiles', 'Jewelry', 'Woodwork', 'Hand painting', 'Other'].map(c => (
+                          {CRAFT_CATEGORIES.map(c => (
                             <SelectItem key={c} value={c}>{c}</SelectItem>
                           ))}
                         </SelectContent>
@@ -332,7 +347,7 @@ export default function ProductUploadPage() {
                     </div>
                     <div className="space-y-2">
                       <Label>Selling Price (INR)</Label>
-                      <Input type="number" value={details.price} onChange={e => setDetails({...details, price: Number(e.target.value)})} className="rounded-xl h-12 font-bold text-primary" />
+                      <Input type="number" value={details.price} onChange={e => setDetails({...details, price: Number(e.target.value)})} className="rounded-xl h-12 font-bold text-primary font-sans" />
                     </div>
                     <div className="space-y-2">
                       <Label>Stock Quantity</Label>
@@ -378,7 +393,9 @@ export default function ProductUploadPage() {
                     <Badge variant="outline" className="border-primary/20">{details.style}</Badge>
                   </div>
                   <h2 className="text-4xl font-headline font-bold leading-tight">{details.title}</h2>
-                  <p className="text-3xl font-bold text-primary">₹{details.price}</p>
+                  <p className="text-3xl font-bold text-primary font-sans flex items-baseline">
+                    <span className="text-xl mr-1">₹</span>{details.price}
+                  </p>
                   <p className="text-muted-foreground leading-relaxed font-body">{details.description}</p>
                   <div className="pt-6 border-t border-primary/10">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">Heritage Story</p>
