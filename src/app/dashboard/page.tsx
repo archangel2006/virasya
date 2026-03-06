@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { generateMarketingContent } from '@/ai/flows/artisan-ai-marketing-generator';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, useUser, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useUser, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { collection, query, where, deleteDoc, doc } from 'firebase/firestore';
 
 export default function ArtisanDashboard() {
@@ -23,6 +23,14 @@ export default function ArtisanDashboard() {
   const db = useFirestore();
   const [isMarketingLoading, setIsMarketingLoading] = useState(false);
   const [marketingResult, setMarketingResult] = useState<any>(null);
+
+  // Fetch the user's specific profile to get their full name
+  const profileRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, 'userProfiles', user.uid);
+  }, [db, user]);
+
+  const { data: profile } = useDoc(profileRef);
 
   const productsQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -37,25 +45,25 @@ export default function ArtisanDashboard() {
       value: '45,800', 
       isCurrency: true, 
       trend: '+12.5%', 
-      icon: <TrendingUp className="h-5 w-5" /> 
+      icon: <TrendingUp className="h-4 w-4" /> 
     },
     { 
       label: 'Live Products', 
       value: listings?.filter(l => l.status === 'Published').length || '12', 
       trend: null, 
-      icon: <PackageCheck className="h-5 w-5" /> 
+      icon: <PackageCheck className="h-4 w-4" /> 
     },
     { 
       label: 'Profile Views', 
       value: '1,240', 
       trend: '+5.2%', 
-      icon: <Eye className="h-5 w-5" /> 
+      icon: <Eye className="h-4 w-4" /> 
     },
     { 
       label: 'Marketplace Reach', 
       value: 'Global', 
       trend: null, 
-      icon: <Globe className="h-5 w-5" /> 
+      icon: <Globe className="h-4 w-4" /> 
     },
   ];
 
@@ -95,11 +103,11 @@ export default function ArtisanDashboard() {
           <div>
             <h1 className="text-4xl font-headline font-bold">Artisan Hub</h1>
             <p className="text-muted-foreground">
-              Welcome back, <span className="text-primary font-bold">{user?.displayName || 'Artisan'}</span>. Here's your shop performance.
+              Welcome back, <span className="text-primary font-bold">{profile?.name || user?.displayName || 'Artisan'}</span>. Here's your shop performance.
             </p>
           </div>
           <Link href="/dashboard/upload">
-            <Button className="rounded-full gap-2 px-6 h-12 shadow-lg">
+            <Button className="rounded-full gap-2 px-6 h-12 shadow-lg font-bold">
               <Plus className="h-5 w-5" />
               Add New Craft
             </Button>
@@ -107,27 +115,27 @@ export default function ArtisanDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {stats.map((stat, i) => (
-            <Card key={i} className="border-none shadow-sm rounded-[32px] overflow-hidden bg-white">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="bg-primary/5 p-2.5 rounded-2xl text-primary">
+            <Card key={i} className="border-none shadow-sm rounded-[24px] overflow-hidden bg-white">
+              <CardContent className="p-4 md:p-5">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="bg-primary/5 p-2 rounded-xl text-primary">
                     {stat.icon}
                   </div>
                   {stat.trend && (
-                    <Badge variant="secondary" className="bg-green-50 text-green-600 hover:bg-green-50 border-none px-2 py-0.5 text-[10px] font-bold">
+                    <Badge variant="secondary" className="bg-green-50 text-green-600 hover:bg-green-50 border-none px-2 py-0.5 text-[9px] font-bold">
                       {stat.trend}
                     </Badge>
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-headline text-muted-foreground mb-1">{stat.label}</p>
-                  <p className="text-2xl font-sans font-bold text-foreground flex items-baseline">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
+                  <p className="text-xl md:text-2xl font-bold text-foreground flex items-baseline leading-none">
                     {stat.isCurrency && (
-                      <span className="font-sans text-xl mr-1 text-primary">₹</span>
+                      <span className="font-sans text-lg mr-0.5 text-primary">₹</span>
                     )}
-                    {stat.value}
+                    <span className="font-sans">{stat.value}</span>
                   </p>
                 </div>
               </CardContent>
@@ -150,25 +158,25 @@ export default function ArtisanDashboard() {
               ) : listings && listings.length > 0 ? (
                 <div className="divide-y">
                   {listings.map(item => (
-                    <div key={item.id} className="p-5 flex items-center justify-between hover:bg-secondary/10 transition-colors">
+                    <div key={item.id} className="p-4 flex items-center justify-between hover:bg-secondary/5 transition-colors">
                       <div className="flex items-center gap-4">
-                        <div className="relative h-16 w-16 rounded-2xl overflow-hidden bg-secondary">
+                        <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-secondary">
                           {item.images?.[0] && <Image src={item.images[0]} alt={item.productName} fill className="object-cover" />}
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg font-headline">{item.productName}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge className="text-[10px] px-2 py-0 rounded-full">{item.status}</Badge>
-                            <span className="text-xs text-muted-foreground font-medium">
-                              <span className="font-sans">₹</span>{item.price} • {item.availableQuantity} in stock
+                          <h3 className="font-bold text-base font-headline leading-tight">{item.productName}</h3>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Badge className="text-[9px] px-1.5 py-0 rounded-full h-4">{item.status}</Badge>
+                            <span className="text-[11px] text-muted-foreground font-medium">
+                              <span className="font-sans">₹</span><span className="font-sans">{item.price}</span> • {item.availableQuantity} in stock
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5" onClick={() => handleMarketingGen(item)}>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5" onClick={() => handleMarketingGen(item)}>
                               <Share2 className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
@@ -205,7 +213,7 @@ export default function ArtisanDashboard() {
                             )}
                           </DialogContent>
                         </Dialog>
-                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5" onClick={() => handleDelete(item.id)}>
+                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5" onClick={() => handleDelete(item.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
