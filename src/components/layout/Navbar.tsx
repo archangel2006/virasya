@@ -35,7 +35,7 @@ export function Navbar() {
   const auth = useAuth();
   const router = useRouter();
 
-  // Fetch the user's profile to get their real name
+  // Fetch the user's profile to get their real name and role
   const profileRef = useMemoFirebase(() => {
     if (!db || !user) return null;
     return doc(db, 'userProfiles', user.uid);
@@ -50,6 +50,7 @@ export function Navbar() {
   };
 
   const displayName = profile?.name || user?.displayName || user?.email?.split('@')[0] || 'User';
+  const role = profile?.role;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -74,10 +75,14 @@ export function Navbar() {
               <Store className="h-4 w-4" />
               Marketplace
             </Link>
-            <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-              <Sparkles className="h-4 w-4" />
-              Artisan Hub
-            </Link>
+            
+            {role === 'artisan' && (
+              <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <Sparkles className="h-4 w-4" />
+                Artisan Hub
+              </Link>
+            )}
+
             <div className="h-6 w-[1px] bg-border mx-2" />
             
             <DropdownMenu>
@@ -117,18 +122,25 @@ export function Navbar() {
                     </div>
                   </div>
                   <DropdownMenuSeparator className="bg-secondary/50" />
-                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-primary" />
-                      Artisan Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
-                    <Link href="/marketplace" className="flex items-center gap-2">
-                      <Package className="h-4 w-4 text-primary" />
-                      My Purchases
-                    </Link>
-                  </DropdownMenuItem>
+                  
+                  {role === 'artisan' && (
+                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
+                      <Link href="/dashboard" className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        Artisan Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+
+                  {role === 'buyer' && (
+                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
+                      <Link href="/purchases" className="flex items-center gap-2">
+                        <Package className="h-4 w-4 text-primary" />
+                        My Purchases
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+
                   <DropdownMenuSeparator className="bg-secondary/50" />
                   <DropdownMenuItem onClick={handleLogout} className="rounded-xl cursor-pointer py-2.5 text-destructive focus:text-destructive focus:bg-destructive/5">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -171,7 +183,15 @@ export function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden pb-6 border-t mt-2 flex flex-col gap-4 py-4 animate-in slide-in-from-top-2">
             <Link href="/marketplace" className="px-2 py-2 text-lg font-medium">Marketplace</Link>
-            <Link href="/dashboard" className="px-2 py-2 text-lg font-medium">Artisan Hub</Link>
+            
+            {role === 'artisan' && (
+              <Link href="/dashboard" className="px-2 py-2 text-lg font-medium">Artisan Hub</Link>
+            )}
+
+            {role === 'buyer' && (
+              <Link href="/purchases" className="px-2 py-2 text-lg font-medium">My Purchases</Link>
+            )}
+
             {user && (
               <button onClick={handleLogout} className="px-2 py-2 text-lg font-medium text-destructive text-left">Logout</button>
             )}
