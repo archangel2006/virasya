@@ -61,7 +61,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               </div>
               <h1 className="text-5xl lg:text-6xl font-headline font-bold mb-6 leading-tight">{MOCK_PRODUCT.productName}</h1>
               <div className="flex items-center gap-4 mb-8">
-                <p className="text-4xl font-bold text-primary">₹{MOCK_PRODUCT.price}</p>
+                <p className="text-4xl font-bold text-primary font-sans">₹{MOCK_PRODUCT.price}</p>
                 <Badge variant="outline" className="text-xs font-bold uppercase tracking-widest text-accent border-accent/30 bg-accent/5">Verified Heritage</Badge>
               </div>
               <p className="text-muted-foreground leading-relaxed text-xl font-body">

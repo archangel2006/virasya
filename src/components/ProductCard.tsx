@@ -41,7 +41,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <h3 className="font-headline text-xl font-bold leading-tight line-clamp-1 group-hover:text-primary transition-colors">
               {product.productName}
             </h3>
-            <span className="font-bold text-primary text-xl">₹{product.price}</span>
+            <span className="font-bold text-primary text-xl font-sans">₹{product.price}</span>
           </div>
           <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium mb-4">
             <MapPin className="h-3 w-3 text-primary" />

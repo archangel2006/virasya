@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -135,7 +136,7 @@ export default function ArtisanDashboard() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{stat.label}</p>
                   <p className="text-lg md:text-xl font-bold text-foreground flex items-baseline leading-none font-sans">
                     {stat.isCurrency && (
-                      <span className="text-base mr-0.5 text-primary">₹</span>
+                      <span className="text-base mr-0.5 text-primary font-sans">₹</span>
                     )}
                     {stat.value}
                   </p>
@@ -170,7 +171,7 @@ export default function ArtisanDashboard() {
                           <div className="flex items-center gap-2 mt-0.5">
                             <Badge className="text-[9px] px-1.5 py-0 rounded-full h-4">{item.status}</Badge>
                             <span className="text-[11px] text-muted-foreground font-medium font-sans">
-                              <span className="mr-0.5 text-primary">₹</span>{item.price} • {item.availableQuantity} in stock
+                              <span className="mr-0.5 text-primary font-sans">₹</span>{item.price} • {item.availableQuantity} in stock
                             </span>
                           </div>
                         </div>
