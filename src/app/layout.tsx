@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { FirebaseClientProvider } from '@/firebase';
 import { Toaster } from '@/components/ui/toaster';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Virasya — AI Powered Marketplace for Authentic Handcrafted Art',
@@ -25,6 +26,26 @@ export default function RootLayout({
           {children}
           <Toaster />
         </FirebaseClientProvider>
+
+        {/* Google Translate Hidden Element */}
+        <div id="google_translate_element" style={{ display: 'none' }}></div>
+
+        {/* Google Translate Initialization Script */}
+        <Script id="google-translate-init" strategy="afterInteractive">
+          {`
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,hi,ta,bn,mr',
+                autoDisplay: false
+              }, 'google_translate_element');
+            }
+          `}
+        </Script>
+        <Script
+          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

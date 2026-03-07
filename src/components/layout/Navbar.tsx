@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, User, Store, Sparkles, Menu, X, Globe, ChevronDown, LogOut, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,7 @@ const LANGUAGES = [
   { code: 'hi', label: 'हिन्दी' },
   { code: 'ta', label: 'தமிழ்' },
   { code: 'bn', label: 'বাংলা' },
+  { code: 'mr', label: 'मराठी' },
 ];
 
 export function Navbar() {
@@ -35,7 +36,6 @@ export function Navbar() {
   const auth = useAuth();
   const router = useRouter();
 
-  // Fetch the user's profile to get their real name and role
   const profileRef = useMemoFirebase(() => {
     if (!db || !user) return null;
     return doc(db, 'userProfiles', user.uid);
@@ -47,6 +47,15 @@ export function Navbar() {
     if (!auth) return;
     await signOut(auth);
     router.push('/');
+  };
+
+  const switchLanguage = (langCode: string) => {
+    setLang(langCode);
+    const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+    if (selectElement) {
+      selectElement.value = langCode;
+      selectElement.dispatchEvent(new Event('change'));
+    }
   };
 
   const displayName = profile?.name || user?.displayName || user?.email?.split('@')[0] || 'User';
@@ -83,13 +92,6 @@ export function Navbar() {
               </Link>
             )}
             
-            {role === 'artisan' && (
-              <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
-                <Sparkles className="h-4 w-4" />
-                Artisan Hub
-              </Link>
-            )}
-
             <div className="h-6 w-[1px] bg-border mx-2" />
             
             <DropdownMenu>
@@ -102,7 +104,7 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="rounded-xl border-none shadow-xl">
                 {LANGUAGES.map((l) => (
-                  <DropdownMenuItem key={l.code} onClick={() => setLang(l.code)} className="cursor-pointer">
+                  <DropdownMenuItem key={l.code} onClick={() => switchLanguage(l.code)} className="cursor-pointer">
                     {l.label}
                   </DropdownMenuItem>
                 ))}
@@ -180,14 +182,14 @@ export function Navbar() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden pb-6 border-t mt-2 flex flex-col gap-4 py-4 animate-in slide-in-from-top-2">
-            <Link href="/marketplace" className="px-2 py-2 text-lg font-medium">Marketplace</Link>
+            <Link href="/marketplace" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>Marketplace</Link>
             
             {role === 'buyer' && (
-              <Link href="/purchases" className="px-2 py-2 text-lg font-medium">My Purchases</Link>
+              <Link href="/purchases" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>My Purchases</Link>
             )}
 
             {role === 'artisan' && (
-              <Link href="/dashboard" className="px-2 py-2 text-lg font-medium">Artisan Hub</Link>
+              <Link href="/dashboard" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>Artisan Hub</Link>
             )}
 
             {user && (
@@ -201,7 +203,7 @@ export function Navbar() {
                     key={l.code} 
                     variant={lang === l.code ? "default" : "outline"} 
                     size="sm" 
-                    onClick={() => setLang(l.code)}
+                    onClick={() => switchLanguage(l.code)}
                     className="rounded-full h-8 text-xs"
                    >
                      {l.label}
@@ -209,7 +211,7 @@ export function Navbar() {
                  ))}
                </div>
                {!user && (
-                <Link href="/auth" className="mt-4">
+                <Link href="/auth" className="mt-4" onClick={() => setIsMenuOpen(false)}>
                   <Button size="lg" className="w-full rounded-full">Get Started</Button>
                 </Link>
                )}
