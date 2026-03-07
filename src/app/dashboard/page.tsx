@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   Plus, Package, Trash2, Share2, Loader2, 
   TrendingUp, Eye, Globe, PackageCheck,
-  BookOpen, Sparkles, Camera, Pencil
+  BookOpen, Sparkles, Camera, Pencil, Megaphone
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
@@ -256,6 +256,24 @@ export default function ArtisanDashboard() {
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    <span className="font-bold text-foreground block mb-0.5">AI Product Listing Generator</span>
+                    Instantly create professional product descriptions and SEO tags.
+                  </p>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    <span className="font-bold text-foreground block mb-0.5">Craft Storytelling</span>
+                    Fact-based storytelling to ensure cultural authenticity.
+                  </p>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <TrendingUp className="h-4 w-4 text-primary" />
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -289,18 +307,18 @@ export default function ArtisanDashboard() {
                   <div className="space-y-6 mt-6 max-h-[60vh] overflow-y-auto pr-2">
                     <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
                       <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
-                        <Camera className="h-5 w-5" /> 1. Quality Visuals
+                        <Sparkles className="h-5 w-5" /> 1. AI Product Listing Generator
                       </h4>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Upload clear, well-lit photos of your craft. Our AI works best when it can see textures and colors clearly to detect materials and craft styles accurately.
+                        Save time and attract more buyers with professional, SEO-optimized titles and descriptions. Our AI analyzes your craft's features to create compelling copy that ranks high in searches.
                       </p>
                     </div>
                     <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
                       <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
-                        <Sparkles className="h-5 w-5" /> 2. AI Storytelling
+                        <BookOpen className="h-5 w-5" /> 2. Craft Storytelling
                       </h4>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Use the 'Draft' mode to refine AI-generated stories. The AI ensures cultural authenticity by referencing regional heritage, but your specific artisan journey makes it compelling.
+                        Authenticity is your superpower. Our AI uses cultural heritage data and your specific techniques to weave a factual, engaging story that connects buyers to the soul of your craft.
                       </p>
                     </div>
                     <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
@@ -308,15 +326,23 @@ export default function ArtisanDashboard() {
                         <TrendingUp className="h-5 w-5" /> 3. Smart Pricing
                       </h4>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        The AI Price Advisor considers labor hours and material costs. Use the suggested midpoint as a benchmark for competitive global pricing.
+                        Price your crafts with confidence. The AI Price Advisor considers labor hours, material costs, and market rarity to suggest a fair, competitive price range for the global market.
                       </p>
                     </div>
                     <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
                       <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
-                        <Globe className="h-5 w-5" /> 4. Reach New Markets
+                        <Megaphone className="h-5 w-5" /> 4. Marketing & Social Media
                       </h4>
                       <p className="text-sm text-muted-foreground leading-relaxed">
-                        Instantly translate listings into regional languages. Our marketing generator also creates ready-to-use posts for Instagram and WhatsApp to boost your shop's visibility.
+                        Boost your shop's visibility effortlessly. Instantly generate punchy, professional posts for Instagram and WhatsApp to share your masterpieces with the world.
+                      </p>
+                    </div>
+                    <div className="bg-secondary/20 p-6 rounded-3xl border border-primary/10">
+                      <h4 className="font-bold text-primary mb-2 flex items-center gap-2">
+                        <Globe className="h-5 w-5" /> 5. Reach Global Markets
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Break language barriers. Instantly translate your listings into multiple regional and international languages to connect with buyers regardless of where they are.
                       </p>
                     </div>
                   </div>
