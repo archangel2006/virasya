@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Script from 'next/script';
 
 export const metadata: Metadata = {
-  title: 'Virasya — AI Powered Marketplace for Authentic Handcrafted Art',
+  title: 'Virasya',
   description: 'Where Heritage Craft Meets AI. Supporting artisans and preserving cultural authenticity.',
 };
 

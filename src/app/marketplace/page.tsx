@@ -72,24 +72,6 @@ export default function MarketplacePage() {
           <p className="text-xl text-muted-foreground">Authentic handcrafted art curated for the modern soul.</p>
         </header>
 
-        {/* AI Recommendations Section */}
-        <section className="mb-16 bg-white/50 p-8 rounded-[40px] border-none shadow-sm">
-          <div className="flex items-center gap-2 mb-8">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-headline font-bold">Recommended for You</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? (
-              [1, 2, 3].map(i => <div key={i} className="aspect-[4/5] bg-secondary/20 animate-pulse rounded-[32px]" />)
-            ) : sortedProducts.slice(0, 3).map(p => (
-              <ProductCard key={`rec-${p.id}`} product={p} />
-            ))}
-            {!isLoading && sortedProducts.length === 0 && (
-              <p className="col-span-full text-center text-muted-foreground italic">No recommendations yet.</p>
-            )}
-          </div>
-        </section>
-
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar - Desktop */}
           <aside className="hidden lg:block w-64 space-y-10">
@@ -178,6 +160,23 @@ export default function MarketplacePage() {
             )}
           </section>
         </div>
+        {/* AI Recommendations Section */}
+        <section className="mb-16 bg-white/50 p-8 rounded-[40px] border-none shadow-sm">
+          <div className="flex items-center gap-2 mb-8">
+            <Sparkles className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-headline font-bold">Recommended for You</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoading ? (
+              [1, 2, 3].map(i => <div key={i} className="aspect-[4/5] bg-secondary/20 animate-pulse rounded-[32px]" />)
+            ) : sortedProducts.slice(0, 3).map(p => (
+              <ProductCard key={`rec-${p.id}`} product={p} />
+            ))}
+            {!isLoading && sortedProducts.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground italic">No recommendations yet.</p>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );
