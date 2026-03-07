@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   Plus, Package, Trash2, Share2, Loader2, 
   TrendingUp, Eye, Globe, PackageCheck,
-  BookOpen, Sparkles, Camera
+  BookOpen, Sparkles, Camera, Pencil
 } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
@@ -183,6 +183,11 @@ export default function ArtisanDashboard() {
                         </div>
                       </div>
                       <div className="flex gap-1">
+                        <Link href={`/dashboard/upload?edit=${item.id}`}>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </Link>
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5" onClick={() => handleMarketingGen(item)}>
