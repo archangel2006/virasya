@@ -2,14 +2,34 @@
 
 Virasya is a real, functional prototype that connects Indian artisans with global buyers. It uses Firebase for data/auth and Google Genkit (Gemini) for its AI features.
 
-## 🚀 Architecture Overview
+## 🚀 Tech Stack & Architecture 
 
-Everything in this app is **real and functional**, not dummy data.
 
 - **Frontend**: Next.js 15 (App Router) with Tailwind CSS & ShadCN UI.
 - **Authentication**: Real Firebase Auth (Google & Email/Password).
 - **Database**: Real-time Firestore database.
 - **AI Engine**: Google Genkit + Gemini 2.5 Flash for Vision, Translation, and Content Generation.
+
+```
+  Users (Artisan / Buyer)
+        │
+        ▼
+Frontend (Next.js UI)
+        │
+        ▼
+Server Actions (Next.js Backend)
+        │
+ ┌───────────────┬───────────────┐
+ ▼               ▼               ▼
+Genkit AI        Firebase Auth   Firestore DB
+(Gemini 2.5)     (Login/Roles)   (Products, Users)
+ │                                 │
+ ▼                                 ▼
+AI Outputs                    Real-time Sync
+Stories, Titles,              Marketplace Data
+Marketing, Translation
+
+```
 
 ## 🛠 Local Setup (How to implement it)
 
