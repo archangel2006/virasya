@@ -15,7 +15,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/product/${product.id}`}>
       <Card className="group overflow-hidden border-none shadow-sm hover:shadow-2xl transition-all duration-500 rounded-[32px] bg-white">
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden">
           <Image
             src={product.images?.[0] || "https://picsum.photos/seed/default/600/800"}
             alt={product.productName}
@@ -35,7 +35,7 @@ export function ProductCard({ product }: ProductCardProps) {
              </div>
           </div>
         </div>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <div className="flex justify-between items-start gap-2 mb-2">
             <h3 className="font-headline text-xl font-bold leading-tight line-clamp-1 group-hover:text-primary transition-colors">
               {product.productName}

@@ -16,7 +16,7 @@ const featuredProducts: Product[] = [
     region: 'Khurja, Uttar Pradesh',
     materials: 'Natural clay, mineral glazes',
     price: 1200,
-    images: ['https://picsum.photos/seed/pot1/600/800'],
+    images: ['/home-page/terracotta-bowl.jpeg'],
     story: 'Hand-shaped on a traditional kick wheel...',
     tags: ['pottery', 'decor', 'handmade'],
     status: 'Published',
@@ -33,7 +33,7 @@ const featuredProducts: Product[] = [
     region: 'Chanderi, Madhya Pradesh',
     materials: 'Pure Silk, Zari',
     price: 2500,
-    images: ['https://picsum.photos/seed/tex1/600/800'],
+    images: ['/home-page/chanderi-silk-stole.jpeg'],
     story: 'Woven by weavers in the historic town of Chanderi...',
     tags: ['silk', 'scarf', 'handloom'],
     status: 'Published',
@@ -50,7 +50,7 @@ const featuredProducts: Product[] = [
     region: 'Mithila, Bihar',
     materials: 'Wood, Natural dyes',
     price: 1800,
-    images: ['https://picsum.photos/seed/paint1/600/800'],
+    images: ['/home-page/handpainted-madhubani-tray.jpeg'],
     story: 'Each stroke tells a story of ancient Indian myths...',
     tags: ['art', 'kitchen', 'painting'],
     status: 'Published',
@@ -98,14 +98,9 @@ export default function Home() {
           
           <div className="hidden lg:block absolute top-0 right-0 w-1/3 h-full">
             <div className="relative w-full h-full">
-               <Image 
-                src="https://picsum.photos/seed/heritage/800/1200" 
-                alt="Heritage Craft" 
-                fill 
-                className="object-cover rounded-l-[100px] shadow-2xl"
-                priority
-                data-ai-hint="indian pottery"
-              />
+               
+            <Image src="/hero1.jpeg" alt="Description" width={600} height={400} />
+        
             </div>
           </div>
         </section>
@@ -194,7 +189,7 @@ export default function Home() {
               </div>
               <div className="lg:w-1/2 relative h-[400px] w-full">
                 <Image 
-                  src="https://picsum.photos/seed/workshop/800/600" 
+                  src="/home-page/potter-khurja.jpeg" 
                   alt="Artisan Workshop" 
                   fill 
                   className="object-cover rounded-[50px] shadow-2xl border-4 border-white/10"
