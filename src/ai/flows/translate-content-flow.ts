@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Genkit flow for translating product content accurately using AI.
@@ -11,7 +10,7 @@ const TranslationInputSchema = z.object({
   title: z.string(),
   description: z.string(),
   story: z.string(),
-  targetLanguage: z.enum(['Hindi', 'Tamil', 'Bengali', 'Marathi', 'English']),
+  targetLanguage: z.enum(['Hindi', 'Tamil', 'Bengali', 'Marathi', 'English', 'Gujarati', 'Telugu', 'Kannada', 'Malayalam', 'Punjabi']),
 });
 
 const TranslationOutputSchema = z.object({

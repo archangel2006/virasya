@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, Suspense } from 'react';
@@ -31,6 +30,10 @@ const CRAFT_CATEGORIES = [
   'Leatherwork', 
   'Bamboo & Cane', 
   'Other'
+];
+
+const TRANSLATION_LANGUAGES = [
+  'Hindi', 'Tamil', 'Bengali', 'Marathi', 'Gujarati', 'Telugu', 'Kannada', 'Malayalam', 'Punjabi'
 ];
 
 type ProcessingStep = {
@@ -363,9 +366,9 @@ function ProductUploadContent() {
             <Card className="border-none shadow-sm rounded-[40px] bg-white p-8">
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-2xl font-headline font-bold">Listing Details</h2>
-                <div className="flex gap-2">
-                  {['Hindi', 'Tamil', 'Bengali', 'Marathi'].map(l => (
-                    <Button key={l} variant="ghost" size="sm" className="h-8 rounded-full text-[10px] bg-secondary/30" onClick={() => handleTranslate(l)} disabled={isTranslating}>
+                <div className="flex flex-wrap gap-2 justify-end max-w-[50%]">
+                  {TRANSLATION_LANGUAGES.map(l => (
+                    <Button key={l} variant="ghost" size="sm" className="h-7 rounded-full text-[9px] bg-secondary/30 px-2" onClick={() => handleTranslate(l)} disabled={isTranslating}>
                       {isTranslating ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Globe className="h-3 w-3 mr-1" />}
                       {l}
                     </Button>

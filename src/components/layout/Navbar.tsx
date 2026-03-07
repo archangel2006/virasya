@@ -24,6 +24,11 @@ const LANGUAGES = [
   { code: 'ta', label: 'தமிழ்' },
   { code: 'bn', label: 'বাংলা' },
   { code: 'mr', label: 'मराठी' },
+  { code: 'gu', label: 'ગુજરાતી' },
+  { code: 'te', label: 'తెలుగు' },
+  { code: 'kn', label: 'ಕನ್ನಡ' },
+  { code: 'ml', label: 'മലയാളം' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ' },
 ];
 
 export function Navbar() {
@@ -66,7 +71,7 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-headline font-bold text-primary tracking-tight">Virasya</span>
+            <span className="text-2xl font-headline font-bold text-primary tracking-tight text-sans">Virasya</span>
           </Link>
 
           <div className="hidden md:flex items-center flex-1 max-w-md px-4">
@@ -102,7 +107,7 @@ export function Navbar() {
                   <ChevronDown className="h-3 w-3" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="rounded-xl border-none shadow-xl">
+              <DropdownMenuContent align="end" className="rounded-xl border-none shadow-xl max-h-[70vh] overflow-y-auto">
                 {LANGUAGES.map((l) => (
                   <DropdownMenuItem key={l.code} onClick={() => switchLanguage(l.code)} className="cursor-pointer">
                     {l.label}

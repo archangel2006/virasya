@@ -19,7 +19,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased selection:bg-primary/20">
         <FirebaseClientProvider>
@@ -36,7 +36,7 @@ export default function RootLayout({
             function googleTranslateElementInit() {
               new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'en,hi,ta,bn,mr',
+                includedLanguages: 'en,hi,ta,bn,mr,gu,te,kn,ml,pa',
                 autoDisplay: false
               }, 'google_translate_element');
             }
