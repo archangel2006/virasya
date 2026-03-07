@@ -27,7 +27,7 @@ const LANGUAGES = [
   { code: 'gu', label: 'ગુજરાતી' },
   { code: 'te', label: 'తెలుగు' },
   { code: 'kn', label: 'ಕನ್ನಡ' },
-  { code: 'ml', label: 'മലയാളം' },
+  { code: 'ml', label: 'മലയാളம்' },
   { code: 'pa', label: 'ਪੰਜਾਬੀ' },
 ];
 
@@ -71,7 +71,7 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-headline font-bold text-primary tracking-tight text-sans">Virasya</span>
+            <span className="text-2xl font-headline font-bold text-primary tracking-tight">Virasya</span>
           </Link>
 
           <div className="hidden md:flex items-center flex-1 max-w-md px-4">
@@ -89,6 +89,13 @@ export function Navbar() {
               <Store className="h-4 w-4" />
               Marketplace
             </Link>
+
+            {role === 'artisan' && (
+              <Link href="/dashboard" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Artisan Hub
+              </Link>
+            )}
 
             {role === 'buyer' && (
               <Link href="/purchases" className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1">
@@ -137,16 +144,6 @@ export function Navbar() {
                   </div>
                   <DropdownMenuSeparator className="bg-secondary/50" />
                   
-                  {role === 'artisan' && (
-                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-2.5">
-                      <Link href="/dashboard" className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                        Artisan Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-
-                  <DropdownMenuSeparator className="bg-secondary/50" />
                   <DropdownMenuItem onClick={handleLogout} className="rounded-xl cursor-pointer py-2.5 text-destructive focus:text-destructive focus:bg-destructive/5">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Logout</span>
@@ -189,12 +186,15 @@ export function Navbar() {
           <div className="md:hidden pb-6 border-t mt-2 flex flex-col gap-4 py-4 animate-in slide-in-from-top-2">
             <Link href="/marketplace" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>Marketplace</Link>
             
-            {role === 'buyer' && (
-              <Link href="/purchases" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>My Purchases</Link>
+            {role === 'artisan' && (
+              <Link href="/dashboard" className="px-2 py-2 text-lg font-medium text-primary flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <Sparkles className="h-5 w-5" />
+                Artisan Hub
+              </Link>
             )}
 
-            {role === 'artisan' && (
-              <Link href="/dashboard" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>Artisan Hub</Link>
+            {role === 'buyer' && (
+              <Link href="/purchases" className="px-2 py-2 text-lg font-medium" onClick={() => setIsMenuOpen(false)}>My Purchases</Link>
             )}
 
             {user && (
