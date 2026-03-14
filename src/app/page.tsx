@@ -1,10 +1,14 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Sparkles, ShieldCheck, Heart, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/layout/Navbar';
 import { ProductCard } from '@/components/ProductCard';
 import { Product } from '@/lib/types';
+import { useUser } from '@/firebase';
 
 const featuredProducts: Product[] = [
   {
@@ -16,7 +20,7 @@ const featuredProducts: Product[] = [
     region: 'Khurja, Uttar Pradesh',
     materials: 'Natural clay, mineral glazes',
     price: 1200,
-    images: ['/home-page/terracotta-bowl.jpeg'],
+    images: ['https://picsum.photos/seed/101/600/400'],
     story: 'Hand-shaped on a traditional kick wheel...',
     tags: ['pottery', 'decor', 'handmade'],
     status: 'Published',
@@ -33,7 +37,7 @@ const featuredProducts: Product[] = [
     region: 'Chanderi, Madhya Pradesh',
     materials: 'Pure Silk, Zari',
     price: 2500,
-    images: ['/home-page/chanderi-silk-stole.jpeg'],
+    images: ['https://picsum.photos/seed/102/600/400'],
     story: 'Woven by weavers in the historic town of Chanderi...',
     tags: ['silk', 'scarf', 'handloom'],
     status: 'Published',
@@ -50,7 +54,7 @@ const featuredProducts: Product[] = [
     region: 'Mithila, Bihar',
     materials: 'Wood, Natural dyes',
     price: 1800,
-    images: ['/home-page/handpainted-madhubani-tray.jpeg'],
+    images: ['https://picsum.photos/seed/103/600/400'],
     story: 'Each stroke tells a story of ancient Indian myths...',
     tags: ['art', 'kitchen', 'painting'],
     status: 'Published',
@@ -61,6 +65,16 @@ const featuredProducts: Product[] = [
 ];
 
 export default function Home() {
+  const { user } = useUser();
+  const router = useRouter();
+
+  const handleSellClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      router.push('/auth');
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col paper-texture">
       <Navbar />
@@ -87,7 +101,7 @@ export default function Home() {
                     Explore Marketplace
                   </Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/dashboard" onClick={handleSellClick}>
                   <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg border-2">
                     Sell Your Craft
                   </Button>
@@ -99,7 +113,7 @@ export default function Home() {
           <div className="hidden lg:block absolute top-0 right-0 w-1/3 h-full">
             <div className="relative w-full h-full">
                
-            <Image src="/hero1.jpeg" alt="Description" width={600} height={400} />
+            <Image src="https://picsum.photos/seed/1/600/400" alt="Pottery Making" width={600} height={400} />
         
             </div>
           </div>
@@ -189,7 +203,7 @@ export default function Home() {
               </div>
               <div className="lg:w-1/2 relative h-[400px] w-full">
                 <Image 
-                  src="/home-page/potter-khurja.jpeg" 
+                  src="https://picsum.photos/seed/potter/800/600" 
                   alt="Artisan Workshop" 
                   fill 
                   className="object-cover rounded-[50px] shadow-2xl border-4 border-white/10"
