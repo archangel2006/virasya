@@ -2,18 +2,30 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { MapPin, ArrowRight, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/lib/types';
+import { useUser } from '@/firebase';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { user } = useUser();
+  const router = useRouter();
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      router.push('/auth');
+    }
+  };
+  
   return (
-    <Link href={`/product/${product.id}`}>
+    <Link href={`/product/${product.id}`} onClick={handleCardClick}>
       <Card className="group overflow-hidden border-none shadow-sm hover:shadow-2xl transition-all duration-500 rounded-[32px] bg-white">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
