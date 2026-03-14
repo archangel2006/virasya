@@ -20,7 +20,7 @@ const featuredProducts: Product[] = [
     region: 'Khurja, Uttar Pradesh',
     materials: 'Natural clay, mineral glazes',
     price: 1200,
-    images: ['https://picsum.photos/seed/101/600/400'],
+    images: ['/home-page/terracotta-bowl.jpeg'],
     story: 'Hand-shaped on a traditional kick wheel...',
     tags: ['pottery', 'decor', 'handmade'],
     status: 'Published',
@@ -37,7 +37,7 @@ const featuredProducts: Product[] = [
     region: 'Chanderi, Madhya Pradesh',
     materials: 'Pure Silk, Zari',
     price: 2500,
-    images: ['https://picsum.photos/seed/102/600/400'],
+    images: ['/home-page/chanderi-silk-stole.jpeg'],
     story: 'Woven by weavers in the historic town of Chanderi...',
     tags: ['silk', 'scarf', 'handloom'],
     status: 'Published',
@@ -54,7 +54,7 @@ const featuredProducts: Product[] = [
     region: 'Mithila, Bihar',
     materials: 'Wood, Natural dyes',
     price: 1800,
-    images: ['https://picsum.photos/seed/103/600/400'],
+    images: ['/home-page/handpainted-madhubani-tray.jpeg'],
     story: 'Each stroke tells a story of ancient Indian myths...',
     tags: ['art', 'kitchen', 'painting'],
     status: 'Published',
@@ -113,7 +113,7 @@ export default function Home() {
           <div className="hidden lg:block absolute top-0 right-0 w-1/3 h-full">
             <div className="relative w-full h-full">
                
-            <Image src="https://picsum.photos/seed/1/600/400" alt="Pottery Making" width={600} height={400} />
+            <Image src="/hero1.jpeg" alt="Description" width={600} height={400} />
         
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function Home() {
               </div>
               <div className="lg:w-1/2 relative h-[400px] w-full">
                 <Image 
-                  src="https://picsum.photos/seed/potter/800/600" 
+                  src="/home-page/potter-khurja.jpeg" 
                   alt="Artisan Workshop" 
                   fill 
                   className="object-cover rounded-[50px] shadow-2xl border-4 border-white/10"
